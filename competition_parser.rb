@@ -3,11 +3,12 @@ require 'json'
 require 'uri'
 
 class CompetitionParser
-  attr_reader :site_url, :agent, :categories
+  attr_accessor :site_url, :offset_timezone, :categories
   def initialize(site_url)
     @site_url = site_url
     @agent = Mechanize.new
 
+    @offset_timezone = nil
     @categories = {}
 
   end
@@ -35,7 +36,7 @@ class CompetitionParser
     data = {}
     category = ""
 
-    page = agent.get(site_url)
+    page = @agent.get(site_url)
     main_summary_table =  search_main_summary_table(page)
 
     main_summary_table.search("tr").each {|tr|
@@ -69,13 +70,13 @@ class CompetitionParser
         time = tds[1].text
         category = tds[2].text
         segment = tds[3].text
-        data[category][segment]["datetime"] = DateTime.parse("#{date} #{time}")
+        data[category][segment]["datetime"] = DateTime.parse("#{date} #{time}").new_offset(@offset_timezone)
       end
     }
     return @categories = data
   end
   def adjust_time_zone(data, tz)
-    ## yet
+    ## yet : new_offset
   end
 
   ################
@@ -90,7 +91,7 @@ class CompetitionParser
       page = @agent.get(value[:result_url])
       table = search_result_table(page)
       table.search("./tr").each {|tr|
-        tds = tr.search("td")
+        tds = tr.search("./td")
         next if tds.empty?
 
         num = tds[0].text
@@ -105,14 +106,19 @@ class CompetitionParser
   end
 end
 
-#site_url = "http://www.isuresults.com/results/season1516/gpjpn2015/"
-site_url = "http://www.isuresults.com/results/season1516/gpusa2015/"
-#site_url = "http://www.lev-nrw.org/docs/event/1469/index.htm"
-#site_url = "http://www.tvoj-toner.com/goldenspin/index.htm"
+################################################################
 
-#site_url = "file://file:///home/vagrant/src/fisk8/competition_summary/gpjpn15.html"
-
-parser = CompetitionParser.new(site_url)
-parser.parse_summary
-parser.parse_results
-puts parser.categories
+if $0 == __FILE__
+  site_url = "http://www.isuresults.com/results/season1516/gpjpn2015/"
+  #site_url = "http://www.isuresults.com/results/season1516/gpusa2015/"
+  #site_url = "http://www.lev-nrw.org/docs/event/1469/index.htm"
+  #site_url = "http://www.tvoj-toner.com/goldenspin/index.htm"
+  
+  siite_url = "file://file:///home/vagrant/src/fisk8/competition_summary/gpjpn15.html"
+  
+  parser = CompetitionParser.new(site_url)
+  parser.offset_timezone = "UTC+9"
+  parser.parse_summary
+  parser.parse_results
+  puts parser.categories.to_json
+end
