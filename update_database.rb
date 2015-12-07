@@ -16,10 +16,9 @@ module CompetitionWatcher
     end
     def connect_database
       @log.info("connection to database...")
-      connection = PG::connect(host: "192.168.33.10", user: "postgres", password: "postgres", port: "5432", dbname: "competition_db")
-      
-      ActiveRecord::Base.configurations = YAML.load_file('database.yml')
-      ActiveRecord::Base.establish_connection(:development)
+      local_db_address = "postgresql://postgres@192.168.33.10/competition_db"
+      db_address = ENV['HEROKU_POSTGRESQL_TEAL_URL'] || local_db_address
+      ActiveRecord::Base.establish_connection(db_address)
     end
 
     def update
@@ -30,6 +29,7 @@ module CompetitionWatcher
       headers = tbl.headers
 
       tbl.each {|c|   ## for each competitions
+        next if c[:status] == "skip"
         ## database
         competition = Competition.find_by_key(c[:key])
         competition = Competition.create if competition.nil?

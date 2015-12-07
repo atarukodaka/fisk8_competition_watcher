@@ -8,7 +8,7 @@ class MyApp < Sinatra::Base
   
   set :port, 1234
   set :bind, '0.0.0.0'
-  set :database, {adapter: "pg", database: "db/competition_db"}
+#  set :database, {adapter: "postgresql", database: "hogehoge_db"}
 
   enable :inline_templates
   include ERB::Util
