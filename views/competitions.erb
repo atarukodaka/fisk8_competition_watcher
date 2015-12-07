@@ -2,9 +2,12 @@
   <tr>
     <th>Class<th>Season<th>Date<th>Name<th>city<th>Timezone
   </tr>
-                              
+
 <% competitions.each do |competition|%>
-  <tr>
+<%  now = Time.now
+  status = (now > competition[:ending_date]) ? "done" : (now > competition[:starting_date]) ? "ongoing" : "incomming"
+%>
+  <tr class="<%= status %>">
     <td><%= competition[:competition_class] %>
     <td><%= competition[:season] %>
     <td><%= competition[:starting_date].strftime("%Y/%m/%d(%a)") %>-<%= competition[:ending_date].strftime("%Y/%m/%d(%a)") %>

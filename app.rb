@@ -14,7 +14,8 @@ module CompetitionWatcher
     include ERB::Util
 
     get '/' do
-      erb %Q[<li><a href="/competitions">competition list</a>
+      erb %Q[<h2>Contents</h2>
+<li><a href="/competitions">competition list</a>
   <li><a href="/skaters">skater list</a>]
     end
 
@@ -32,9 +33,7 @@ module CompetitionWatcher
     get '/competition' do
       key = params[:key]
       competition = Competition.find_by_key(key)
-      output = ["<h2>#{competition[:name]}</h2>"]
-      output << %Q[<li><a href="/entry?key=#{competition[:key]}">entry</a>]
-      erb output.join("")
+      erb :competition, locals: {competition: competition}
     end
     get '/entry' do
       key = params[:key]

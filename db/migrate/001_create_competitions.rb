@@ -28,13 +28,17 @@ class CreateCompetitions < ActiveRecord::Migration
       t.timestamp
     end
 
-    create_table :entries do |t|
-      t.string :category
-      t.string :number
-      t.integer :skater_id
+    create_table :categories do |t|
+      t.string :name
 
-      t.timestamp
       t.belongs_to :competition
+    end
+
+    create_table :segments do |t|
+      t.string :name
+      t.datetime :starting_time
+
+      t.belongs_to :category
     end
   end
 end

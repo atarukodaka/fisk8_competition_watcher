@@ -25,9 +25,10 @@ module Fisk8
       search_table_by_first_header(page, "Date")
     end
     def get_href_on_td(site_url, td)
+      return "" if td.search("a").empty?
       return URI.join(site_url, td.search("a").attribute("href")).to_s
     end
-    def parse_summary(site_url, offset_timezone)
+    def parse_summary(site_url, offset_timezone="")
       #data = {entry_url: {}, result_url: {}, starting_order_url: {}, judge_score_url: {}, scheduled_date: {}}
       data = {}
 
@@ -44,20 +45,21 @@ module Fisk8
           category = tds[0].text
           entry_url = get_href_on_td(site_url, tds[2])
           result_url = get_href_on_td(site_url, tds[3])
-          data[category] = {entry_url: entry_url, result_url: result_url}
-          #data[:entry_url][category] = entries_url
-          #data[:result_url][category] = result_url
+          data[category] = {entry_url: entry_url, result_url: result_url, segment: {}}
         elsif tds[1].text != ""
           segment = tds[1].text
           starting_order_url = get_href_on_td(site_url, tds[3])
           judge_score_url = get_href_on_td(site_url, tds[4])
-          
-          data[category][segment] = {}
-          data[category][segment]["starting_order_url"] = starting_order_url
-          data[category][segment]["judge_score_url"] = judge_score_url
+
+          if data[category][:segment][segment].nil?
+            data[category][:segment][segment] = {}
+          end
+          data[category][:segment][segment]["starting_order_url"] = starting_order_url
+          data[category][:segment][segment]["judge_score_url"] = judge_score_url
         end
       }
 
+      ## time schedule
       time_schedule_table = search_time_schedule_table(page)
       date = time = ""
       time_schedule_table.search("tr").each {|tr|
@@ -69,7 +71,8 @@ module Fisk8
           time = tds[1].text
           category = tds[2].text
           segment = tds[3].text
-          data[category][segment]["datetime"] = DateTime.parse("#{date} #{time}").new_offset(offset_timezone)
+
+          data[category][:segment][segment]["starting_time"] = DateTime.parse("#{date} #{time}").new_offset(offset_timezone || 0)
         end
       }
       #return @categories = data
