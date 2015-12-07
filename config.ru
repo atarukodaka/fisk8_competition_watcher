@@ -1,3 +1,3 @@
-require './app.rb'
+require './app'
 
-run MyApp
+run CompetitionWatcher::Application

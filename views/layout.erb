@@ -1,0 +1,101 @@
+<html>
+<head>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script type="text/javascript" src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
+  <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Competition Watcher for figureskating</title>
+
+
+<style type="text/css">
+body {    
+    background-color: #eee;
+    font-family: "Segoe UI", MeiryoKe_PGothic, "Meiryo", "Meiryo UI", Georgia, Palatino, "Palatino Linotype", Times, "Times New Roman", serif;
+    font-size: medium;
+}
+
+body > .container {
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  background-color: white;
+}
+
+.breadcrumb, .navbar, #footer, .page_info, footer {
+    font-size: small;
+}
+
+.pane {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+footer#footer {
+    background-color: white;
+    padding: 20px;
+
+    .copyright {
+	border-top: 1px solid black;
+	padding: 10px;
+    }
+}
+header.eyecatch {
+    height: 100px;
+    background-color: black;
+    margin-top: 10px;
+}
+header.eyecatch  .sitename {
+    padding: 20px 0 0 20px;
+	
+    font-weight: lighter;
+    font-size: x-large;
+    color: #aaa;
+}
+
+header.eyecatch  .sitename a {
+    color: #aaa;
+}
+/*****************************************************************/
+/* navbar */
+
+.navbar-default {
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+ol.breadcrumb {
+    background-color: white; 
+    margin-bottom: 0;
+    padding-top: 0; 
+    padding-bottom: 0;
+}
+ol.breadcrumb li.active {
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="pane">
+	<header class="eyecatch" id="header">
+	  <div class="sitename"><a href="/">Competition Watcher for Figureskating</a></div>
+	</header>
+      </div>
+      <div class="pane">
+	<ul class="nav navbar"><li>foo</ol>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="pane">
+	<%= yield %>
+      </div>
+    </div>
+
+    <hr>
+    <div class="row">
+      <footer id="footer" class="pane">
+	powered by foo
+      </footer>
+    </div>
+  </div>
+</body>

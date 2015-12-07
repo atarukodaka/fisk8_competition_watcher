@@ -3,7 +3,7 @@ BE = bundle exec
 
 
 update:
-	$(BE) ruby update_database.rb
+	$(BE) ruby competition_watcher.rb
 
 app:
 	$(BE) rackup -o 192.168.33.10 -p 9292

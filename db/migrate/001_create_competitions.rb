@@ -2,8 +2,9 @@ class CreateCompetitions < ActiveRecord::Migration
   def change
     create_table :skaters do |t|
       t.string :name
-      t.integer :isu_num
+      t.integer :isu_number
       t.string :nation
+      t.string :category
 
       t.timestamp
     end

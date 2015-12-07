@@ -1,61 +1,65 @@
 require 'sinatra/base'
 require 'sinatra/reloader'
 
-require './update_database.rb'
+require './competition_watcher'
 
-class MyApp < Sinatra::Base
-  register Sinatra::Reloader
-  
-  set :port, 1234
-  set :bind, '0.0.0.0'
-#  set :database, {adapter: "postgresql", database: "hogehoge_db"}
+module CompetitionWatcher
+  class Application < Sinatra::Base
+    register Sinatra::Reloader
 
-  enable :inline_templates
-  include ERB::Util
+    set :port, 1234
+    set :bind, '0.0.0.0'
 
-  get '/' do
-    erb %Q[<li><a href="/list">competition list</a>]
-  end
+    enable :inline_templates
+    include ERB::Util
 
-  get '/list' do
-    dbmng = CompetitionWatcher::Database.new
-    competitions = Competition.all.order("starting_date desc")
-    erb competitions.map {|c|
-      %Q[<li>#{c[:key]} / <a href="/competition?key=#{c[:key]}">#{c[:name]}</a>]
-    }.join("")
-  end
+    get '/' do
+      erb %Q[<li><a href="/competitions">competition list</a>
+  <li><a href="/skaters">skater list</a>]
+    end
 
-  get '/competition' do
-    key = params[:key]
-    competition = Competition.find_by_key(key)
-    output = ["<h2>#{competition[:name]}</h2>"]
-    output << %Q[<li><a href="/entry?key=#{competition[:key]}">entry</a>]
-    erb output.join("")
-  end
-  get '/entry' do
-    key = params[:key]
-    category = params[:category]
+    get '/competitions' do
+      dbmng = CompetitionWatcher::Database.new
+      competitions = Competition.all.order("starting_date desc")
 
-    dbmng = CompetitionWatcher::Database.new
-    competition_id = Competition.find_by_key(key).id
+      erb competitions.map {|c|
+        %Q[<li>#{c[:key]} / <a href="/competition?key=#{c[:key]}">#{c[:name]}</a>]
+      }.join("")
+      
+      erb :competitions, locals: {competitions: competitions}
+    end
 
-    cond = {competition_id: competition_id}
-    cond[:category] = category if category
-    erb Entry.where(cond).map {|entry|
-      skater_name = Skater.find_by_id(entry.skater_id).try(:name)
-      "<li>[#{entry.category}] #{entry.number}: #{skater_name} (#{entry.skater_id})"
-    }.join("")
+    get '/competition' do
+      key = params[:key]
+      competition = Competition.find_by_key(key)
+      output = ["<h2>#{competition[:name]}</h2>"]
+      output << %Q[<li><a href="/entry?key=#{competition[:key]}">entry</a>]
+      erb output.join("")
+    end
+    get '/entry' do
+      key = params[:key]
+      category = params[:category]
+
+      dbmng = CompetitionWatcher::Database.new
+      competition_id = Competition.find_by_key(key).id
+
+      cond = {competition_id: competition_id}
+      cond[:category] = category if category
+      erb Entry.where(cond).map {|entry|
+        skater_name = Skater.find_by_id(entry.skater_id).try(:name)
+        "<li>[#{entry.category}] #{entry.number}: #{skater_name} (#{entry.skater_id})"
+      }.join("")
+    end
+
+    get '/skaters' do
+      dbmng = CompetitionWatcher::Database.new
+      skaters = Skater.all.order("isu_number desc")
+      erb "<h2>Skaters</h2>" + skaters.map {|s|
+        %Q[<li>#{s[:name]} (#{s[:isu_number]})]
+      }.join("")
+    end
+
+    get '/skater' do
+    end
   end
 end
-
-__END__
-@@layout
-<html>
-<head>
-<title>Competition Watcher for figureskating</title>
-</head>
-
-<body>
-  <h1>Competition Watcher for figureskating</h1>
-  <%= yield %>
-</body>

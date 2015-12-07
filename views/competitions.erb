@@ -1,0 +1,16 @@
+<table class="table">
+  <tr>
+    <th>Class<th>Season<th>Date<th>Name<th>city<th>Timezone
+  </tr>
+                              
+<% competitions.each do |competition|%>
+  <tr>
+    <td><%= competition[:competition_class] %>
+    <td><%= competition[:season] %>
+    <td><%= competition[:starting_date].strftime("%Y/%m/%d(%a)") %>-<%= competition[:ending_date].strftime("%Y/%m/%d(%a)") %>
+    <td><a href="competition?key=<%= competition[:key] %>"><%= competition[:name] %></a>
+    <td><%= competition[:city] %>, <%= competition[:country] %>
+    <td><%= competition[:timezone] %>
+<% end %>
+
+</table>
