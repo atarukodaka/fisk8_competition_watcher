@@ -1,0 +1,61 @@
+<h2><%= competition[:name] %></h2>
+
+<table class="table" style="width: 30%">
+  <tr>
+    <th>Location<td><%= competition[:city] %>, <%= competition[:country] %>
+  </tr>
+  <tr>
+    <th>Date</th>
+    <td><%= competition[:starting_date].strftime("%Y/%m/%d") %> -
+      <%= competition[:ending_date].strftime("%Y/%m/%d") %>
+    </td>
+  </tr>
+  <tr>
+    <th>
+      Official Site
+    <td>
+      <a href="<%= competition[:site_url] %>" target="_blank">Result</a>
+  </tr>
+</table>
+
+<h3> Skating Order / Result</h3>
+
+<table class="table" style="width: 60%">
+<tr>
+  <th>Category<th>Segment<th>Order/Result/Report
+<% competition.categories.each {|category| %>
+  <% category.segments.each {|segment| %>
+<tr>
+<td><%= category.name %><td><%= segment.name %>
+<td><a href="result?competition_id=<%= %>">Result</a>
+  <% } %>
+
+<% } %>
+</table>
+
+
+<h3>Time Schedule</h3>
+
+<%
+ ar = competition.categories.map {|category| 
+
+  category.segments.map {|segment|
+    {category: category.name, segment: segment.name, starting_time: segment.starting_time || Time.at(0)}
+  }
+ }.flatten
+
+%>
+
+<table class="table" style="width: 70%">
+  <tr>
+    <th>Starting Time <th>Content
+  </tr>
+  <% ar.sort_by {|item| item[:starting_time]}.each {|hash| %>
+  <tr>
+    <td><%= (hash[:starting_time].nil?) ? "" : hash[:starting_time].strftime("%Y/%m/%d %H:%M") %>
+    <td><%= hash[:category] %>-<%= hash[:segment] %>
+
+  <% } %>
+      
+      
+</table>
