@@ -1,10 +1,16 @@
+BE = bundle exec
 
 
 
+update:
+	$(BE) ruby update_database.rb
+
+app:
+	$(BE) rackup -o 192.168.33.10 -p 9292
 
 clean:
 	rm -rf *~
 
 reset_db:
-	bundle exec rake db:migrate VERSION=000
-	bundle exec rake db:migrate VERSION=001
+	$(BE) rake db:migrate VERSION=000
+	$(BE) rake db:migrate VERSION=001
