@@ -1,4 +1,6 @@
-<table class="table">
+<h1>Competition List</h1>
+
+<table class="table table-striped table-hover">
   <tr>
     <th>Class<th>Season<th>Date<th>Name<th>city<th>Timezone
   </tr>
@@ -6,9 +8,12 @@
 <% competitions.each do |competition|%>
 <%  now = Time.now
   status = (now > competition[:ending_date]) ? "done" : (now > competition[:starting_date]) ? "ongoing" : "incomming"
+
+  status = (now > competition[:ending_date]) ? "warning" : (now > competition[:starting_date]) ? "success" : "default"
 %>
   <tr class="<%= status %>">
     <td><%= competition[:competition_class] %>
+    <td><%= competition[:type] %>
     <td><%= competition[:season] %>
     <td><%= competition[:starting_date].strftime("%Y/%m/%d(%a)") %>-<%= competition[:ending_date].strftime("%Y/%m/%d(%a)") %>
     <td><a href="competition?key=<%= competition[:key] %>"><%= competition[:name] %></a>

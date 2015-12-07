@@ -14,6 +14,7 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :name
       t.string :season
       t.string :competition_class
+      t.string :competition_type
       t.string :hosted_by
       t.string :country
       t.string :city

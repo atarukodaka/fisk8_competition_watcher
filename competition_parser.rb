@@ -33,7 +33,7 @@ module Fisk8
       data = {}
 
       category = ""
-
+      return {} if site_url.nil? || site_url == ""
       page = @agent.get(site_url)
       main_summary_table =  search_main_summary_table(page)
       return {} if main_summary_table.nil?
