@@ -11,7 +11,7 @@ module Fisk8
       @agent = Mechanize.new
 
       @offset_timezone = nil
-      @categories = {}
+      #@categories = {}
     end
 
     def search_table_by_first_header(page, str)
@@ -34,7 +34,9 @@ module Fisk8
       return URI.join(site_url, td.search("a").attribute("href")).to_s
     end
     def parse_summary
+      #data = {entry_url: {}, result_url: {}, starting_order_url: {}, judge_score_url: {}, scheduled_date: {}}
       data = {}
+
       category = ""
 
       page = @agent.get(site_url)
@@ -46,15 +48,18 @@ module Fisk8
 
         if tds[0].text != ""
           category = tds[0].text
-          entries_url = get_href_on_td(tds[2])
+          entry_url = get_href_on_td(tds[2])
           result_url = get_href_on_td(tds[3])
-          data[category] = {entries: entries_url, result_url: result_url}
+          data[category] = {entry_url: entry_url, result_url: result_url}
+          #data[:entry_url][category] = entries_url
+          #data[:result_url][category] = result_url
         elsif tds[1].text != ""
           segment = tds[1].text
           starting_order_url = get_href_on_td(tds[3])
           judge_score_url = get_href_on_td(tds[4])
+          
           data[category][segment] = {}
-          data[category][segment]["starting_order"] = starting_order_url
+          data[category][segment]["starting_order_url"] = starting_order_url
           data[category][segment]["judge_score_url"] = judge_score_url
         end
       }
@@ -73,8 +78,8 @@ module Fisk8
           data[category][segment]["datetime"] = DateTime.parse("#{date} #{time}").new_offset(@offset_timezone)
         end
       }
-      return @categories = data
-      #return data
+      #return @categories = data
+      return data
     end
     def adjust_time_zone(data, tz)
       ## yet : new_offset
@@ -84,26 +89,45 @@ module Fisk8
     def search_result_table(page)
       return search_table_by_first_header(page, "FPl.")
     end
-
-    def parse_results
-
-      @categories.each {|category, value|
-        @categories[category]["result"] = {}
-        page = @agent.get(value[:result_url])
-        table = search_result_table(page)
-        table.search("./tr").each {|tr|
-          tds = tr.search("./td")
-          next if tds.empty?
-
-          num = tds[0].text
-          name = tds[1].text
-          nation = tds[2].text
-          points = tds[3].text
-          sp = tds[4].text
-          fs = tds[5].text
-          @categories[category]["result"][num] = {num: num, name: name, nation: nation, points: points, sp: sp, fs: fs}
-        }
+    def parse_category_result(category, result_url)
+      data = {}
+      page = @agent.get(result_url)
+      table = search_result_table(page)
+      table.search("./tr").each {|tr|
+        tds = tr.search("./td")
+        next if tds.empty?
+        
+        num = tds[0].text
+        name = tds[1].text
+        nation = tds[2].text
+        points = tds[3].text
+        sp = tds[4].text
+        fs = tds[5].text
+        data[num] = {num: num, name: name, nation: nation, points: points, sp: sp, fs: fs}
       }
+      return data
+    end
+    def parse_results(data)
+      data.each {|category, value|
+        data[category]["result"] = parse_category_result(category, value[:result_url])
+      }
+      return data
+    end
+
+    def parse_category_entries(url)
+      data = {}
+      page = @agent.get(url)
+      table = search_table_by_first_header(page, "No.")
+      table.search("./tr").each {|tr|
+        tds = tr.search("./td")
+        next if tds.empty?
+        
+        number = tds[0].text
+        name = tds[1].text
+        nation = tds[2].text
+        data[number] = {number: number, name: name, nation: nation}
+      }
+      return data
     end
   end
 end
@@ -111,6 +135,14 @@ end
 ################################################################
 
 if $0 == __FILE__
+  parser = Fisk8::CompetitionParser.new(nil)
+  entry_url = "http://www.isuresults.com/results/season1516/gpjpn2015/CAT001EN.HTM"
+  
+  puts parser.parse_category_entries(entry_url)
+
+end
+
+if false
   site_url = "http://www.isuresults.com/results/season1516/gpjpn2015/"
   #site_url = "http://www.isuresults.com/results/season1516/gpusa2015/"
   #site_url = "http://www.lev-nrw.org/docs/event/1469/index.htm"
@@ -121,9 +153,17 @@ if $0 == __FILE__
   
   parser = Fisk8::CompetitionParser.new(site_url)
   parser.offset_timezone = "UTC+9"
-  parser.parse_summary
-  parser.parse_results
-  puts parser.categories.to_json
+  summary = parser.parse_summary
+  puts summary.to_json
+  result = {}
+  summary.each {|category, value|
+    result[category] = parser.parse_category_result(category, value[:result_url])
+  }
+  #puts result.to_json
+  #data = parser.parse_results(data)
+  #puts data.to_json
+  #puts parser.categories.to_json
+
 end
 
 
