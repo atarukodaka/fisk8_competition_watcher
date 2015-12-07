@@ -50,6 +50,10 @@ module CompetitionWatcher
       }.join("")
     end
 
+    get '/result' do
+      erb "not yet available"
+    end
+    ################################################################
     get '/skaters' do
       dbmng = CompetitionWatcher::Database.new
       skaters = Skater.all.order("isu_number desc")

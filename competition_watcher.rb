@@ -15,9 +15,9 @@ module CompetitionWatcher
       connect_database
     end
     def connect_database
-      @log.info("connection to database...")
       local_db_address = "postgresql://postgres@192.168.33.10/competition_db"
       db_address = ENV['HEROKU_POSTGRESQL_TEAL_URL'] || local_db_address
+      @log.info("connection to database...")
       ActiveRecord::Base.establish_connection(db_address)
     end
 
