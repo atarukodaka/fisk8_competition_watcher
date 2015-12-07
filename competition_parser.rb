@@ -4,14 +4,8 @@ require 'uri'
 
 module Fisk8
   class CompetitionParser
-    attr_accessor :site_url, :offset_timezone, :categories
-
-    def initialize(site_url)
-      @site_url = site_url
+    def initialize
       @agent = Mechanize.new
-
-      @offset_timezone = nil
-      #@categories = {}
     end
 
     def search_table_by_first_header(page, str)
@@ -30,10 +24,10 @@ module Fisk8
     def search_time_schedule_table(page)
       search_table_by_first_header(page, "Date")
     end
-    def get_href_on_td(td)
+    def get_href_on_td(site_url, td)
       return URI.join(site_url, td.search("a").attribute("href")).to_s
     end
-    def parse_summary
+    def parse_summary(site_url, offset_timezone)
       #data = {entry_url: {}, result_url: {}, starting_order_url: {}, judge_score_url: {}, scheduled_date: {}}
       data = {}
 
@@ -41,22 +35,22 @@ module Fisk8
 
       page = @agent.get(site_url)
       main_summary_table =  search_main_summary_table(page)
-
+      return {} if main_summary_table.nil?
       main_summary_table.search("tr").each {|tr|
         tds = tr / "td"
         next if tds[0].nil?
 
         if tds[0].text != ""
           category = tds[0].text
-          entry_url = get_href_on_td(tds[2])
-          result_url = get_href_on_td(tds[3])
+          entry_url = get_href_on_td(site_url, tds[2])
+          result_url = get_href_on_td(site_url, tds[3])
           data[category] = {entry_url: entry_url, result_url: result_url}
           #data[:entry_url][category] = entries_url
           #data[:result_url][category] = result_url
         elsif tds[1].text != ""
           segment = tds[1].text
-          starting_order_url = get_href_on_td(tds[3])
-          judge_score_url = get_href_on_td(tds[4])
+          starting_order_url = get_href_on_td(site_url, tds[3])
+          judge_score_url = get_href_on_td(site_url, tds[4])
           
           data[category][segment] = {}
           data[category][segment]["starting_order_url"] = starting_order_url
@@ -75,7 +69,7 @@ module Fisk8
           time = tds[1].text
           category = tds[2].text
           segment = tds[3].text
-          data[category][segment]["datetime"] = DateTime.parse("#{date} #{time}").new_offset(@offset_timezone)
+          data[category][segment]["datetime"] = DateTime.parse("#{date} #{time}").new_offset(offset_timezone)
         end
       }
       #return @categories = data

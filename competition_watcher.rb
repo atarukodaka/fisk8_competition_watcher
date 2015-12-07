@@ -29,7 +29,7 @@ module CompetitionWatcher
       headers = tbl.headers
 
       tbl.each {|c|   ## for each competitions
-        next if c[:status] == "skip"
+        next if c[:name].nil? || c[:status] == "skip"
         ## database
         competition = Competition.find_by_key(c[:key])
         competition = Competition.create if competition.nil?
@@ -39,9 +39,8 @@ module CompetitionWatcher
         @log.info("#{c[:name]},  #{c[:site_url]}")
         
         site_url = c[:site_url]
-        parser = Fisk8::CompetitionParser.new(site_url)
-        parser.offset_timezone = c[:timezone]
-        summary = parser.parse_summary
+        parser = Fisk8::CompetitionParser.new
+        summary = parser.parse_summary(site_url, c[:timezone])
         
         ## entry
         summary.each {|category, value|
