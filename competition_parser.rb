@@ -28,7 +28,7 @@ module Fisk8
       return "" if td.search("a").empty?
       return URI.join(site_url, td.search("a").attribute("href")).to_s
     end
-    def parse_summary(site_url, offset_timezone="")
+    def parse_summary(site_url, offset_timezone="UTC")
       #data = {entry_url: {}, result_url: {}, starting_order_url: {}, judge_score_url: {}, scheduled_date: {}}
       data = {}
 
@@ -54,8 +54,8 @@ module Fisk8
           if data[category][:segment][segment].nil?
             data[category][:segment][segment] = {}
           end
-          data[category][:segment][segment]["starting_order_url"] = starting_order_url
-          data[category][:segment][segment]["judge_score_url"] = judge_score_url
+          data[category][:segment][segment]["order_url"] = starting_order_url
+          data[category][:segment][segment]["score_url"] = judge_score_url
         end
       }
 
@@ -72,7 +72,10 @@ module Fisk8
           category = tds[2].text
           segment = tds[3].text
 
-          data[category][:segment][segment]["starting_time"] = DateTime.parse("#{date} #{time}").new_offset(offset_timezone || 0)
+          Time.zone = offset_timezone || "UTC"
+          starting_time = Time.zone.parse("#{date} #{time}")
+          data[category][:segment][segment]["starting_time"] = starting_time
+          #data[category][:segment][segment]["starting_time"] = DateTime.parse("#{date} #{time}").new_offset(offset_timezone || 0)
         end
       }
       #return @categories = data

@@ -23,16 +23,16 @@
 <table class="table table-striped table-hover">
 <thead>
 <tr>
-  <th>Category<th>Entry<th>Segment<th>Segment<th>Result
+  <th>Category<th>Entry<th>Segment1<th>Segment2<th>Result
 </thead>
 <% competition.categories.each {|category| %>
 <tr>
   <td><%= category.name %>
-  <td>entry
+  <td><a href="<%= category[:entry_url] %>">entry<a>
    <% segment = category.segments %>
-  <td><%= segment.first.try(:name) %> (judge score)
-  <td><%= segment.second.try(:name) %> (judge score)
-  <td>result
+  <td><a href="<%= segment.first.order_url %>"><%= segment.first.try(:name) %></a> (<a href="<%= segment.first.score_url %>">judge score</a>)
+  <td><a href="<%= segment.second.order_url %>"><%= segment.second.try(:name) %></a> (<a href="<%= segment.second.score_url %>">judge score</a>)
+  <td><a href="<%= category.result_url %>">result</a>
 <% } %>
 </table>
 
@@ -50,11 +50,23 @@
 
 <table class="table table-striped table-hover">
   <tr>
-    <th>Starting Time <th>Content
+    <th>Starting Time (<%= competition[:timezone] %>)<th>Tokyo/Asia (+9)<th>Content
   </tr>
   <% ar.sort_by {|item| item[:starting_time]}.each {|hash| %>
   <tr>
-    <td><%= (hash[:starting_time].nil?) ? "" : hash[:starting_time].strftime("%Y/%m/%d %H:%M") %>
+    <% timezone = competition[:timezone] 
+       if (timezone.to_i != 0) 
+         timezone = timezone.to_i
+       end
+     %>
+    <% sto = stj = "" %>
+    <% if hash[:starting_time].nil? 
+       else
+         sto = hash[:starting_time].in_time_zone(timezone).strftime("%Y/%m/%d %H:%M")
+         stj = hash[:starting_time].in_time_zone("Tokyo").strftime("%Y/%m/%d %H:%M")
+       end %>
+    <td><%= sto  %>
+    <td><%= stj %>
     <td><%= hash[:category] %>-<%= hash[:segment] %>
 
   <% } %>

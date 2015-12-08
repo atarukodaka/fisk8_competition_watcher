@@ -1,3 +1,4 @@
+require 'active_support/core_ext/time/zones'
 require 'active_record'
 require 'yaml'
 require 'pg'
@@ -17,7 +18,7 @@ module CompetitionWatcher
     def connect_database
       local_db_address = "postgresql://postgres@192.168.33.10/competition_db"
       db_address = ENV['HEROKU_POSTGRESQL_TEAL_URL'] || local_db_address
-      @log.info("connection to database...")
+      @log.info("connection to database...#{db_address}")
       ActiveRecord::Base.establish_connection(db_address)
     end
 
@@ -33,6 +34,11 @@ module CompetitionWatcher
        ## database
         competition = Competition.find_by_key(c[:key])
         competition = Competition.create if competition.nil?
+
+        if (c[:timezone] =~ /^UTC([\+\-].*)/)
+          c[:timezone] = $1.to_i
+        end
+
         headers.each {|h| competition[h] = c[h] }
         competition.save
 
@@ -42,20 +48,23 @@ module CompetitionWatcher
         parser = Fisk8::CompetitionParser.new
         summary = parser.parse_summary(site_url, c[:timezone])
         
-        ## entry
+        ## 
         summary.each {|cat, value|
           @log.info(" entry for #{cat} on #{value[:entry_url]}")
           if category = competition.categories.find_by_name(cat)
           else
             category = competition.categories.create(name: cat)
           end
+          category.entry_url = value[:entry_url]
+          category.result_url = value[:result_url]
           value[:segment].each {|seg, v|
             if segment = category.segments.find_by_name(seg)
             else
               segment = category.segments.create(name: seg)
             end
             segment.starting_time = v["starting_time"]
-            #segment.starting_time = DateTime.now
+            segment.order_url = v["order_url"]
+            segment.score_url = v["score_url"]
             segment.save
             
           }

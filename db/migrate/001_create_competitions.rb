@@ -12,6 +12,7 @@ class CreateCompetitions < ActiveRecord::Migration
     create_table :competitions do |t|
       t.string :key
       t.string :name
+      t.string :shortname
       t.string :season
       t.string :competition_class
       t.string :competition_type
@@ -31,6 +32,8 @@ class CreateCompetitions < ActiveRecord::Migration
 
     create_table :categories do |t|
       t.string :name
+      t.string :entry_url
+      t.string :result_url
 
       t.belongs_to :competition
     end
@@ -38,6 +41,8 @@ class CreateCompetitions < ActiveRecord::Migration
     create_table :segments do |t|
       t.string :name
       t.datetime :starting_time
+      t.string :order_url
+      t.string :score_url
 
       t.belongs_to :category
     end

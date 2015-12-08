@@ -17,4 +17,4 @@ reset_db:
 
 
 db_env:
-	export HEROKU_POSTGRESQL_TEAL_URL="postgres://gyvvjhypopgqml:0X8zZxtCu-lqynSY8s6AOuGeG9@ec2-54-204-41-175.compute-1.amazonaws.com:5432/d9okbg9ud42sd"
+
