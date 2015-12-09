@@ -11,6 +11,25 @@ require './model.rb'
 require './competition_parser.rb'
 
 module CompetitionWatcher
+  module Utils
+    def self.abbr(str)
+      case str
+      when "Short Program"; "SP"
+      when "Free Skating"; "FS"
+      when "Short Dance"; "SD"
+      when "Free Dance"; "FD"
+      else str
+      end
+    end
+
+    def self.link_to(url, text)
+      if url.to_s != ""
+        text
+      else
+        %Q[<a href="#{url}">text</a>]
+      end
+    end
+  end
   class Database
     def initialize
       @log = Logger.new(STDERR)
@@ -58,18 +77,18 @@ module CompetitionWatcher
           end
           category.entry_url = value[:entry_url]
           category.result_url = value[:result_url]
+          category.save
           value[:segment].each {|seg, v|
             if segment = category.segments.find_by_name(seg)
             else
               segment = category.segments.create(name: seg)
             end
-            segment.starting_time = v["starting_time"]
+            segment.starting_time = v[:starting_time]
             segment.order_url = v[:order_url]
             segment.score_url = v[:score_url]
             segment.save
             
           }
-          category.save
           ## entry
           if false
             ## clear entries if exists to avoid duplication

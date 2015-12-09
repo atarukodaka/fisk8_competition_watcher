@@ -1,0 +1,78 @@
+<style type="text/css">
+.day_this_month {
+  font-weight: bold;
+  font-size: large;
+}
+.competition_name {
+  font-weight: bold;
+  text-decoration: underline;
+}
+.today {
+  background-color: lightblue;
+}
+</style>
+
+<% 
+   today = Date.today
+   year = (params[:year].to_i != 0)  ? params[:year].to_i : today.year
+   month = (params[:month].to_i != 0) ? params[:month].to_i : today.month
+   last_day = Date.new(year, month, -1).day
+   wday_start = 0
+   wday = (Date.new(year, month, 1).wday - wday_start)
+   weeks = (wday + last_day + 6) / 7
+   first_date = Date.new(year, month, 1)
+   
+%>
+
+<h1>Calendar - <%= first_date.strftime("%b %Y") %></h1>
+
+<nav>
+<a href="/calendar?year=<%= first_date.prev_month.year %>&month=<%= first_date.prev_month.month %>">&lt;&lt;</a>
+<a href="/calendar?year=<%= first_date.next_month.year %>&next_month=<%= first_date.next_month.month %>">&gt;&gt;</a>
+
+</nav>
+
+<table class="table table-bordered">
+  <tr>
+    <th>Sun<th>Mon<th>Tue<th>Wed<th>Thu<th>Fri<th>Sat
+  </tr>
+
+  <% (0...weeks).each do |i| %>
+  <tr>
+    <% (0..6).each do |j| %>
+      <% day = i * 7 - wday + 1 + j%>
+      <% date = first_date + day - 1 %>
+      <% is_this_month = (day < 1 || day > last_day) ? false : true %>
+      <% date_td_class = (date == Date.today) ? "today" : "" %>
+    <td class="<%= date_td_class %>">
+      <% if is_this_month %>
+        <div class="day_this_month"><%= date.day %></div>
+      <% else %>
+        <div>(<%= date.day %>)</div>
+      <% end %>
+
+      <% comps = Competition.where("starting_date <= ?", date).where("ending_date >= ?", date) %>
+      <% comps.each {|comp| %>
+      <div>
+	<div class="competition_name">
+	  <a href="/competition?key=<%= comp.key %>"><%= comp.shortname%></a>
+	</div>
+	<ul>
+	<% comp.categories.each {|category|
+	   category.segments.each {|segment| %>
+	  <% starting_time = segment[:starting_time] %>
+	  <% next if starting_time.nil? %>
+	  <% starting_date = Date.new(starting_time.year, starting_time.month, starting_time.day) %>
+	  <% if starting_date == date %>
+	    <li><%= category.name %> - <%= CompetitionWatcher::Utils.abbr(segment.name) %></li>
+	  <% end %>
+	<% } } %>
+	</ul>
+      </div>
+      <% } %>
+    </td>
+
+     <% end %>
+  <% end %>
+
+</table>
