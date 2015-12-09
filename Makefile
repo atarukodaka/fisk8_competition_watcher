@@ -15,6 +15,10 @@ reset_db:
 	$(BE) rake db:migrate VERSION=000
 	$(BE) rake db:migrate VERSION=001
 
+push_heroku:
+	git push heroku master
 
-db_env:
+push_git:
+	git push origin master
 
+push: push_heroku push_git	

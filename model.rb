@@ -9,7 +9,10 @@ class Category < ActiveRecord::Base
 end
 
 class Segment < ActiveRecord::Base
-  has_many :results, dependent: :destroy
+  has_many :segment_results, dependent: :destroy
+end
+
+class SegmentResult < ActiveRecord::Base
 end
 
 class Skater < ActiveRecord::Base

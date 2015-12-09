@@ -1,13 +1,13 @@
 
-== What's this
+## What's this
 
-== Requirement
+## Requirement
 
 - ruby 2.0 or later
 - postgresql
 - sinatra and some Gems
 
-== Install
+## Install
 
 first, setup SQL services and create database named "competition_db".
 
@@ -20,7 +20,7 @@ and then, run app with "% make app"
 that's it!
 
 
-== Contact
+## Contact
 
 developed by ataru kodaka (@ataru_kodaka).
 

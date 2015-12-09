@@ -2,21 +2,24 @@
 require 'mechanize'
 require 'json'
 require 'uri'
+require 'pry-byebug'
 
 module Fisk8
   class CompetitionParser
     def initialize
       @agent = Mechanize.new
+      @nbsp = Nokogiri::HTML.parse("&nbsp;")
     end
 
     def search_table_by_first_header(page, str)
+
       tables = page / "table"
 
       tables.each {|table|
         elem =  table / "./tr[1]/th[1]"
-        return table if elem.text == str
+        return table if elem.text.gsub(@nbsp, " ") == str
         elem =  table / "./tr[1]/td[1]"
-        return table if elem.text == str
+        return table if elem.text.gsub(@nbsp, " ") == str
       }
       return nil
     end
@@ -45,7 +48,6 @@ module Fisk8
         tds = tr / "td"
         next if tds[0].nil?
 
-        #binding.pry
         if tds[0].text != "" && tds[0].text.ord != 160
           category = tds[0].text
           entry_url = get_href_on_td(site_url, tds[2])
@@ -112,9 +114,34 @@ module Fisk8
       }
       return data
     end
-    def parse_results(data)
-      data.each {|category, value|
-        data[category]["result"] = parse_category_result(category, value[:result_url])
+
+    def parse_segment_result(result_url)
+      data = {}
+      page = @agent.get(result_url)
+      table = search_table_by_first_header(page, "   Pl.  ")
+
+      table.search("./tr").each {|tr|
+        tds = tr.search("./td")
+        next if tds.empty?
+        
+
+        ranking = tds[0].text
+        data[ranking] = {
+          ranking: ranking,
+          skater_name: tds[1].text,
+          skater_nation: tds[2].text,
+          tss: tds[3].text,
+          tes: tds[4].text,
+          pcs: tds[6].text,
+          components_ss: tds[7].text,
+          components_tr: tds[8].text,
+          components_pe: tds[9].text,
+          components_ch: tds[10].text,
+          components_in: tds[11].text,
+          deductions: tds[12].text,
+          starting_number: tds[13].text.gsub("#", "").gsub(" ", "")
+        }
+        #data[ranking] = {ranking: ranking, name: name, nation: nation, points: points, sp: sp, fs: fs}
       }
       return data
     end
@@ -134,17 +161,15 @@ module Fisk8
       }
       return data
     end
+
   end
 end
 
 ################################################################
 
 if $0 == __FILE__
-  parser = Fisk8::CompetitionParser.new(nil)
-  entry_url = "http://www.isuresults.com/results/season1516/gpjpn2015/CAT001EN.HTM"
-  
-  puts parser.parse_category_entries(entry_url)
-
+  parser = Fisk8::CompetitionParser.new
+  p parser.parse_segment_result("http://www.isuresults.com/results/season1516/gpjpn2015/SEG001.HTM")
 end
 
 if false
@@ -156,23 +181,10 @@ if false
   #site_url = "http://www.isuresults.com/results/season1516/jgpcro2015/"
   #site_url = "file://file:///home/vagrant/src/fisk8/competition_summary/gpjpn15.html"
   
-  parser = Fisk8::CompetitionParser.new(site_url)
-  parser.offset_timezone = "UTC+9"
-  summary = parser.parse_summary
-  puts summary.to_json
-  result = {}
-  summary.each {|category, value|
-    result[category] = parser.parse_category_result(category, value[:result_url])
-  }
+
   #puts result.to_json
   #data = parser.parse_results(data)
   #puts data.to_json
   #puts parser.categories.to_json
 
 end
-
-
-
-
-
-

@@ -30,8 +30,8 @@
   <td><%= category.name %>
   <td><a href="<%= category[:entry_url] %>">entry<a>
    <% segment = category.segments %>
-  <td><a href="<%= segment.first.order_url %>"><%= segment.first.try(:name) %></a> (<a href="<%= segment.first.score_url %>">judge score</a>)
-  <td><a href="<%= segment.second.order_url %>"><%= segment.second.try(:name) %></a> (<a href="<%= segment.second.score_url %>">judge score</a>)
+  <td><a href="/result/<%= competition[:key]%>/<%= category.name %>/<%= segment.first.name %>"><%= segment.first.name %></a> (<a href="<%= segment.first.score_url %>">judge score</a>)
+  <td><a href="/result/<%= competition[:key]%>/<%= category.name %>/<%= segment.second.name %>"><%= segment.second.name %></a> (<a href="<%= segment.second.score_url %>">judge score</a>)
   <td><a href="<%= category.result_url %>">result</a>
 <% } %>
 </table>
@@ -71,7 +71,7 @@
        end %>
     <td><%= sto  %>
     <td><%= stj %>
-    <td><%= hash[:category] %>-<%= hash[:segment] %>
+    <td><%= hash[:category] %> - <%= hash[:segment] %>
 
   <% } %>
       

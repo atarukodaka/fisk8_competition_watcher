@@ -32,29 +32,19 @@ module CompetitionWatcher
       erb :competitions, locals: {competitions: competitions}
     end
 
-    get '/competition' do
+    get '/competition/:comp_key' do
       connect_database()
-      key = params[:key]
-      competition = Competition.find_by_key(key)
-      erb :competition, locals: {competition: competition}
-    end
-    get '/entry' do
-      key = params[:key]
-      category = params[:category]
-
-      dbmng = CompetitionWatcher::Database.new
-      competition_id = Competition.find_by_key(key).id
-
-      cond = {competition_id: competition_id}
-      cond[:category] = category if category
-      erb Entry.where(cond).map {|entry|
-        skater_name = Skater.find_by_id(entry.skater_id).try(:name)
-        "<li>[#{entry.category}] #{entry.number}: #{skater_name} (#{entry.skater_id})"
-      }.join("")
+      key = params[:comp_key]
+      if competition = Competition.find_by_key(key)
+        erb :competition, locals: {competition: competition}
+      else
+        erb "#{CGI.escapeHTML(key)} not found"
+      end
     end
 
-    get '/result' do
-      erb "not yet available"
+    get '/result/:comp_key/:category/:segment' do
+      connect_database()
+      erb :segment_result
     end
     get '/calendar' do
       connect_database()
@@ -62,13 +52,14 @@ module CompetitionWatcher
     end
     ################################################################
     get '/skaters' do
-      dbmng = CompetitionWatcher::Database.new
-      skaters = Skater.all.order("isu_number desc")
-      erb "<h2>Skaters</h2>" + skaters.map {|s|
-        %Q[<li>#{s[:name]} (#{s[:isu_number]})]
-      }.join("")
+      connect_database()
+
+      erb :skaters
     end
 
+    get '/skaters/men' do
+      erb "hoge"
+    end
     get '/skater' do
     end
 

@@ -1,7 +1,21 @@
+
+<h1>Upcoming Event</h1>
+
+<% today = Date.today
+
+comps = Competition.where("starting_date <= ? ", today+7).where("ending_date >= ?", today)
+%>
+
+<ul>
+<% comps.each {|comp| %>
+  <li><a href="/competition?key=<%= comp.key %>"><%= comp.name %></a></li>
+<% } %>
+</ul>
+
 <h1>Contents</h1>
 
 <ul>
   <li><a href="/competitions">Competition List</a>
   <li><a href="/calendar">Calendar</a>
-  <li><a href="/skaters">Skater List</a>]
+  <li><a href="/skaters">Skater List</a>
 </ul>

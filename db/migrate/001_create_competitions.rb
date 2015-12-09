@@ -46,7 +46,34 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :order_url
       t.string :score_url
 
+      t.string :ranking
+      t.string :tss
+      t.string :tes
+      t.string :pcs
+      
       t.belongs_to :category
+    end
+
+    create_table :segment_results do |t|
+      t.string :ranking
+      #t.references :skater
+      t.string :skater_name
+      t.string :skater_nation
+
+      t.string :tss
+      t.string :tes
+      t.string :pcs
+
+      t.string :components_ss
+      t.string :components_tr
+      t.string :components_pe
+      t.string :components_ch
+      t.string :components_in
+      
+      t.string :deductions
+      t.string :starting_number
+
+      t.belongs_to :segment
     end
   end
 end

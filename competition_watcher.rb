@@ -86,8 +86,15 @@ module CompetitionWatcher
             segment.starting_time = v[:starting_time]
             segment.order_url = v[:order_url]
             segment.score_url = v[:score_url]
+
+            seg_data = parser.parse_segment_result(segment.order_url)
+            seg_data.each {|k, vv|
+              seg_res = segment.segment_results.find_or_create_by(ranking: k)
+              seg_res.update(vv)
+              seg_res.save
+            }
+            ## result
             segment.save
-            
           }
           ## entry
           if false
@@ -112,11 +119,10 @@ module CompetitionWatcher
             }
           end
         }
-        
       }
     end
 
-    def addhoc_starting_time
+    def update_starting_time
       starting_time_csv_filename = "starting_time.csv"
       tbl = CSV::table(starting_time_csv_filename, encoding: "Shift_JIS:UTF-8")
       tbl.each {|data|
@@ -142,7 +148,7 @@ end
 if $0 == __FILE__
   watcher = CompetitionWatcher::Database.new
   watcher.update
-  watcher.addhoc_starting_time
+  watcher.update_starting_time
 
   watcher.update_skaters
 end

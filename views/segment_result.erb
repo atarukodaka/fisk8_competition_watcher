@@ -1,0 +1,30 @@
+<h1>Segment Result</h1>
+
+<% competition = Competition.find_by_key(params[:comp_key]) %>
+<% category = competition.categories.find_by_name(params[:category]) %>
+<% segment = category.segments.find_by_name(params[:segment]) %>
+
+<nav class="crumb">
+  <ol class="breadcrumb">
+    <li><a href="/competition/<%= competition.key %>"><%= competition.name %></a>
+    <li><%= category.name %>
+    <li><%= segment.name %>
+  </ol>
+</nav>
+
+
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>Ranking<th>Skater<th>Nation<th>TSS<th>TES<th>PCS<th>SS<th>TR<th>PE<th>CH<th>IN<th>Deduction<th>StartingNumber
+    </tr>
+  </thead>
+  <% segment.segment_results.each {|seg_res| %>
+  <tr>
+    <% [:ranking, :skater_name, :skater_nation, :tss, :tes, :pcs, :components_ss, :components_tr, :components_pe, :components_ch, :components_in, :deductions, :starting_number].each {|key| %>
+    <td><%= seg_res[key] %>
+    <% } %> 
+
+  <% } %>
+
+</table>

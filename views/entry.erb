@@ -1,0 +1,14 @@
+<h3>Entry</h3>
+
+<% 
+   comp = Competition.find_by_key(params[:comp_key])
+%>
+
+<ul>
+<% comp.categories.each {|category| %>
+  <li>  <%= category.name %>
+<% } %>
+
+</ul>
+
+
