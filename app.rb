@@ -64,5 +64,16 @@ module CompetitionWatcher
 
     get '/skater' do
     end
+
+    get '/request' do
+      erb :request
+    end
+
+    post '/post_request' do
+      File.open("request.txt", "a"){|f|
+        f.puts params.to_s
+      }
+      erb "Thank you for your cooperation. Your request has been sent to the administrator who will take over your request and reflect to the system in a while."
+    end
   end
 end

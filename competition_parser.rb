@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'mechanize'
 require 'json'
 require 'uri'
@@ -13,18 +14,20 @@ module Fisk8
 
       tables.each {|table|
         elem =  table / "./tr[1]/th[1]"
-        # puts "* '#{elem.text}' vs '#{str}': #{elem.text == str}"
+        return table if elem.text == str
+        elem =  table / "./tr[1]/td[1]"
         return table if elem.text == str
       }
       return nil
     end
     def search_main_summary_table(page)
-      search_table_by_first_header(page, "Category")
+      search_table_by_first_header(page, "Category") || search_table_by_first_header(page, "カテゴリー")
     end
     def search_time_schedule_table(page)
       search_table_by_first_header(page, "Date")
     end
     def get_href_on_td(site_url, td)
+      return "" if td.nil?
       return "" if td.search("a").empty?
       return URI.join(site_url, td.search("a").attribute("href")).to_s
     end
@@ -35,13 +38,15 @@ module Fisk8
       category = ""
       return {} if site_url.nil? || site_url == ""
       page = @agent.get(site_url)
+      
       main_summary_table =  search_main_summary_table(page)
       return {} if main_summary_table.nil?
-      main_summary_table.search("tr").each {|tr|
+      main_summary_table.search("tr")[1..-1].each {|tr|
         tds = tr / "td"
         next if tds[0].nil?
 
-        if tds[0].text != ""
+        #binding.pry
+        if tds[0].text != "" && tds[0].text.ord != 160
           category = tds[0].text
           entry_url = get_href_on_td(site_url, tds[2])
           result_url = get_href_on_td(site_url, tds[3])
@@ -54,30 +59,30 @@ module Fisk8
           if data[category][:segment][segment].nil?
             data[category][:segment][segment] = {}
           end
-          data[category][:segment][segment]["order_url"] = starting_order_url
-          data[category][:segment][segment]["score_url"] = judge_score_url
+          data[category][:segment][segment][:order_url] = starting_order_url
+          data[category][:segment][segment][:score_url] = judge_score_url
         end
       }
 
       ## time schedule
-      time_schedule_table = search_time_schedule_table(page)
-      date = time = ""
-      time_schedule_table.search("tr").each {|tr|
-        tds = tr / "td"
-        next if tds[0].nil?
-        if tds[0].text != ""
-          date = tds[0].text
-        else
-          time = tds[1].text
+      if time_schedule_table = search_time_schedule_table(page)
+        date = time = ""
+        time_schedule_table.search("tr").each {|tr|
+          tds = tr / "td"
+          next if tds[0].nil?
+          if tds[0].text != ""
+            date = tds[0].text
+          else
+            time = tds[1].text
           category = tds[2].text
-          segment = tds[3].text
-
-          Time.zone = offset_timezone || "UTC"
-          starting_time = Time.zone.parse("#{date} #{time}")
-          data[category][:segment][segment]["starting_time"] = starting_time
-          #data[category][:segment][segment]["starting_time"] = DateTime.parse("#{date} #{time}").new_offset(offset_timezone || 0)
-        end
-      }
+            segment = tds[3].text
+            
+            Time.zone = offset_timezone || "UTC"
+            starting_time = Time.zone.parse("#{date} #{time}")
+            data[category][:segment][segment][:starting_time] = starting_time
+          end
+        }
+      end
       #return @categories = data
       return data
     end

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'active_support/core_ext/time/zones'
 require 'active_record'
 require 'yaml'
@@ -26,11 +27,11 @@ module CompetitionWatcher
       # read input table
       competition_csv_filename = "competitions.csv"
       @log.info(" read #{competition_csv_filename}...")
-      tbl = CSV::table(competition_csv_filename)
+      tbl = CSV::table(competition_csv_filename, encoding: "Shift_JIS:UTF-8")
       headers = tbl.headers
 
       tbl.each {|c|   ## for each competitions
-        next if c[:name].nil? || c[:status] == "skip"
+        next if c[:name].nil? || c[:updating] == "skip"
        ## database
         competition = Competition.find_by_key(c[:key])
         competition = Competition.create if competition.nil?
@@ -63,8 +64,8 @@ module CompetitionWatcher
               segment = category.segments.create(name: seg)
             end
             segment.starting_time = v["starting_time"]
-            segment.order_url = v["order_url"]
-            segment.score_url = v["score_url"]
+            segment.order_url = v[:order_url]
+            segment.score_url = v[:score_url]
             segment.save
             
           }
@@ -94,7 +95,25 @@ module CompetitionWatcher
         }
         
       }
-      
+    end
+
+    def addhoc_starting_time
+      starting_time_csv_filename = "starting_time.csv"
+      tbl = CSV::table(starting_time_csv_filename, encoding: "Shift_JIS:UTF-8")
+      tbl.each {|data|
+        set_starting_time(data[:competition_key], data[:category], data[:segment], data[:starting_time])
+      }
+    end
+    def set_starting_time(comp_key, cat, seg, time_str)
+      if competition = Competition.find_by_key(comp_key)
+        @log.info("set starting time for #{comp_key}/#{cat}/#{seg} at #{time_str}")
+        Time.zone = competition.timezone
+
+        category = competition.categories.find_by_name(cat)
+        segment = category.segments.find_by_name(seg)
+        segment.starting_time = Time.zone.parse(time_str)
+        segment.save
+      end
     end
     def update_skaters
     end
@@ -104,5 +123,7 @@ end
 if $0 == __FILE__
   watcher = CompetitionWatcher::Database.new
   watcher.update
+  watcher.addhoc_starting_time
+
   watcher.update_skaters
 end

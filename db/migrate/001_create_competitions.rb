@@ -23,8 +23,10 @@ class CreateCompetitions < ActiveRecord::Migration
       t.date :ending_date
       t.string :timezone
       t.string :site_url
+      t.string :comment
 
       t.string :parser
+      t.string :updating
       t.string :status
 
       t.timestamp

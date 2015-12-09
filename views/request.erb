@@ -1,0 +1,81 @@
+<h1>Request Form</h1>
+
+<div>
+Your Co-operation is appreciated. Please feel free to request any entry of competitions to be included into the system. All the information that you provide will be sent only to the administrator, and your contact will NOT disclosed as public.
+</div>
+
+<hr>
+
+<form class="form-horizontal" action="/post_request" method="post">
+  <!-- name -->
+  <div class="form-group">
+    <label for="contact" class="col-sm-2 control-label">Competition Name</label>
+    <div class="col-sm-10">
+      <input type="input" class="form-control" name="name">
+    </div>
+  </div>
+
+  <!-- starting date -->
+  <div class="form-group">
+    <label for="startingdate" class="col-sm-2 control-label">Starting Date</label>
+    <div class="col-sm-3">
+      <input type="input" class="form-control" name="starting_date"></input>
+    </div>
+  </div>
+  <!-- ending date -->
+  <div class="form-group">
+    <label for="startingdate" class="col-sm-2 control-label">Ending Date</label>
+    <div class="col-sm-3">
+      <input type="input" class="form-control" name="ending_date"></input>
+    </div>
+  </div>
+
+  <!-- city, country, timezone -->
+  <div class="form-group">
+    <label for="contact" class="col-sm-2 control-label">City, Country / Timezone</label>
+    <div class="col-sm-3">
+      <input type="input" class="form-control" name="city">
+    </div>
+    <div class="col-sm-3">
+      <input type="input" class="form-control" name="country">
+    </div>
+    <div class="col-sm-3">
+      <input type="input" class="form-control" name="timezone">
+    </div>
+  </div>
+
+  <!-- site url -->
+  <div class="form-group">
+    <label for="contact" class="col-sm-2 control-label">Site URL</label>
+    <div class="col-sm-10">
+      <input type="input" class="form-control" name="site_url">
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- contact -->
+  <div class="form-group">
+    <label for="contact" class="col-sm-2 control-label">Contact (optional)</label>
+    <div class="col-sm-10">
+      <input type="input" class="form-control" name="contact" placeholder="your name / mail address / twitter account">
+    </div>
+  </div>
+
+
+  <!-- comment -->
+  <div class="form-group">
+    <label for="contact" class="col-sm-2 control-label">Comment (optional)</label>
+    <div class="col-sm-10">
+      <textarea class="form-control" rows="5" name="comment"></textarea>
+    </div>
+  </div>
+
+  <!-- submit -->
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">Send</button>
+    </div>
+  </div>
+</form>
+      
