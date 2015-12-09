@@ -70,11 +70,8 @@ module CompetitionWatcher
         
         ## 
         summary.each {|cat, value|
-          @log.info(" entry for #{cat} on #{value[:entry_url]}")
-          if category = competition.categories.find_by_name(cat)
-          else
-            category = competition.categories.create(name: cat)
-          end
+          @log.info(" category of #{cat} on #{c[:name]}")
+          category = competition.categories.find_or_create_by(name: cat)
           category.entry_url = value[:entry_url]
           category.result_url = value[:result_url]
           category.save
@@ -83,41 +80,27 @@ module CompetitionWatcher
             else
               segment = category.segments.create(name: seg)
             end
+            @log.info("  segment of #{seg}")
             segment.starting_time = v[:starting_time]
             segment.order_url = v[:order_url]
             segment.score_url = v[:score_url]
 
+            @log.info("    parging segment result (#{segment.order_url})")
             seg_data = parser.parse_segment_result(segment.order_url)
             seg_data.each {|k, vv|
               seg_res = segment.segment_results.find_or_create_by(ranking: k)
               seg_res.update(vv)
+              skater = Skater.find_or_create_by(name: vv[:skater_name])
+              skater.nation = vv[:skater_nation]
+              skater.isu_number = vv[:skater_isu_number]
+              skater.category = category.name
+              skater.save
+              seg_res.skater_id = skater.id
               seg_res.save
             }
             ## result
             segment.save
           }
-          ## entry
-          if false
-            ## clear entries if exists to avoid duplication
-            competition.entries.where(category: category).each {|e|
-              e.destroy
-            }
-
-            hash = parser.parse_category_entries(value[:entry_url])
-            hash.each {|k, v|
-              entry = competition.entries.create(category: category, number: v[:number])
-              skater_name = v[:name]
-              skater_nation = v[:nation]
-            
-              if skater = Skater.find_by_name(skater_name)
-              else
-                skater = Skater.create(name: skater_name, nation: skater_nation, category: category)
-                skater.save
-              end
-              entry.skater_id = skater.id
-              entry.save
-            }
-          end
         }
       }
     end

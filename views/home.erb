@@ -8,7 +8,7 @@ comps = Competition.where("starting_date <= ? ", today+7).where("ending_date >= 
 
 <ul>
 <% comps.each {|comp| %>
-  <li><a href="/competition?key=<%= comp.key %>"><%= comp.name %></a></li>
+  <li><%= comp.starting_date.strftime("%d%b%Y") %> - <a href="/competition?key=<%= comp.key %>"><%= comp.name %></a></li>
 <% } %>
 </ul>
 

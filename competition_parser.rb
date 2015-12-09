@@ -119,17 +119,25 @@ module Fisk8
       data = {}
       page = @agent.get(result_url)
       table = search_table_by_first_header(page, "   Pl.  ")
+      return data if table.nil?
 
       table.search("./tr").each {|tr|
         tds = tr.search("./td")
         next if tds.empty?
         
-
+        skater_isu_number = 0
+        if a = tds[1].search("a")
+          bio_url = a.attribute("href").value
+          if bio_url.match("http://www.isuresults.com/bios/isufs([0-9]+)\.htm")
+            skater_isu_number = $1.to_i
+          end
+        end
         ranking = tds[0].text
         data[ranking] = {
           ranking: ranking,
           skater_name: tds[1].text,
           skater_nation: tds[2].text,
+          skater_isu_number: skater_isu_number,
           tss: tds[3].text,
           tes: tds[4].text,
           pcs: tds[6].text,

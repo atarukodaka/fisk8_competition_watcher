@@ -13,16 +13,21 @@ module CompetitionWatcher
     enable :inline_templates
     include ERB::Util
 
+    def initialize
+      connect_database
+      super
+    end
+
     def connect_database
       @database = CompetitionWatcher::Database.new if @database.nil?
     end
 
     get '/' do
+      connect_database
       erb :home
     end
 
     get '/competitions' do
-      connect_database()
       competitions = Competition.all.order("starting_date desc")
 
       erb competitions.map {|c|
@@ -33,7 +38,6 @@ module CompetitionWatcher
     end
 
     get '/competition/:comp_key' do
-      connect_database()
       key = params[:comp_key]
       if competition = Competition.find_by_key(key)
         erb :competition, locals: {competition: competition}
@@ -43,17 +47,13 @@ module CompetitionWatcher
     end
 
     get '/result/:comp_key/:category/:segment' do
-      connect_database()
       erb :segment_result
     end
     get '/calendar' do
-      connect_database()
       erb :calendar
     end
     ################################################################
     get '/skaters' do
-      connect_database()
-
       erb :skaters
     end
 

@@ -56,9 +56,11 @@ class CreateCompetitions < ActiveRecord::Migration
 
     create_table :segment_results do |t|
       t.string :ranking
-      #t.references :skater
+
       t.string :skater_name
       t.string :skater_nation
+      t.integer :skater_isu_number
+      t.references :skater
 
       t.string :tss
       t.string :tes

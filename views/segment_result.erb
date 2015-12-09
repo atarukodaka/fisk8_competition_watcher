@@ -1,17 +1,24 @@
-<h1>Segment Result</h1>
 
 <% competition = Competition.find_by_key(params[:comp_key]) %>
 <% category = competition.categories.find_by_name(params[:category]) %>
 <% segment = category.segments.find_by_name(params[:segment]) %>
 
+
+<hr>
 <nav class="crumb">
   <ol class="breadcrumb">
+    <li><a href="/">Home</a>
+    <li><a href="/competitions">Competitions</a>
     <li><a href="/competition/<%= competition.key %>"><%= competition.name %></a>
     <li><%= category.name %>
     <li><%= segment.name %>
   </ol>
 </nav>
+<hr>
+<!-- ================================================================ -->
 
+
+<h1>Segment Result</h1>
 
 <table class="table table-striped table-hover">
   <thead>
