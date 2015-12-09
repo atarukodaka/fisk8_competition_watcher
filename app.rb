@@ -3,6 +3,8 @@ require 'sinatra/reloader'
 
 require './competition_watcher'
 
+CompetitionWatcher::Database.connect_database
+
 module CompetitionWatcher
   class Application < Sinatra::Base
     register Sinatra::Reloader
@@ -13,17 +15,7 @@ module CompetitionWatcher
     enable :inline_templates
     include ERB::Util
 
-    def initialize
-      connect_database
-      super
-    end
-
-    def connect_database
-      @database = CompetitionWatcher::Database.new if @database.nil?
-    end
-
     get '/' do
-      connect_database
       erb :home
     end
 
@@ -35,6 +27,10 @@ module CompetitionWatcher
       }.join("")
       
       erb :competitions, locals: {competitions: competitions}
+    end
+
+    get '/competitions/json' do
+      Competition.all.to_json
     end
 
     get '/competition/:comp_key' do
@@ -49,6 +45,7 @@ module CompetitionWatcher
     get '/result/:comp_key/:category/:segment' do
       erb :segment_result
     end
+
     get '/calendar' do
       erb :calendar
     end
@@ -62,7 +59,7 @@ module CompetitionWatcher
     end
     get '/skater' do
     end
-
+    ################################################################
     get '/request' do
       erb :request
     end

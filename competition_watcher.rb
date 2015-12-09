@@ -31,17 +31,16 @@ module CompetitionWatcher
     end
   end
   class Database
-    def initialize
-      @log = Logger.new(STDERR)
-      connect_database
-    end
-    def connect_database
+    def self.connect_database
       local_db_address = "postgresql://postgres@192.168.33.10/competition_db"
       db_address = ENV['HEROKU_POSTGRESQL_TEAL_URL'] || local_db_address
-      @log.info("connection to database...#{db_address}")
       ActiveRecord::Base.establish_connection(db_address)
     end
 
+    def initialize
+      @log = Logger.new(STDERR)
+      self.connect_database
+    end
     def update
       # read input table
       competition_csv_filename = "competitions.csv"
