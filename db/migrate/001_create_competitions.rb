@@ -54,6 +54,17 @@ class CreateCompetitions < ActiveRecord::Migration
       t.belongs_to :category
     end
 
+    create_table :skating_orders do |t|
+      t.string :starting_number
+      t.string :skater_name
+      t.string :skater_nation
+      t.integer :skater_isu_number
+      t.references :skater
+      t.string :group
+
+      t.belongs_to :segment
+    end
+
     create_table :segment_results do |t|
       t.string :ranking
 

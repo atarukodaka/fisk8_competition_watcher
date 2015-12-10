@@ -12,7 +12,7 @@ require './competition_parser.rb'
 
 module CompetitionWatcher
   module Utils
-    def self.abbr(str)
+    def abbr(str)
       case str
       when "Short Program"; "SP"
       when "Free Skating"; "FS"
@@ -22,14 +22,14 @@ module CompetitionWatcher
       end
     end
 
-    def self.link_to(url, text)
+    def link_to(url, text)
       if url.to_s != ""
         text
       else
         %Q[<a href="#{url}">text</a>]
       end
     end
-    def self.normalize_timezone(tz)
+    def normalize_timezone(tz)
       if tz =~ /^UTC(.*)$/
         tz = $1.to_i
       end
@@ -81,29 +81,39 @@ module CompetitionWatcher
           category.entry_url = value[:entry_url]
           category.result_url = value[:result_url]
           category.save
+          ## segment
           value[:segment].each {|seg, v|
-            if segment = category.segments.find_by_name(seg)
-            else
-              segment = category.segments.create(name: seg)
-            end
             @log.info("  segment of #{seg}")
+            segment = category.segments.find_or_create_by(name: seg)
             segment.starting_time = v[:starting_time]
             segment.order_url = v[:order_url]
             segment.score_url = v[:score_url]
 
             @log.info("    parging segment result (#{segment.order_url})")
-            seg_data = parser.parse_segment_result(segment.order_url)
-            seg_data.each {|k, vv|
-              seg_res = segment.segment_results.find_or_create_by(ranking: k)
-              seg_res.update(vv)
-              skater = Skater.find_or_create_by(name: vv[:skater_name])
-              skater.nation = vv[:skater_nation]
-              skater.isu_number = vv[:skater_isu_number]
-              skater.category = category.name
-              skater.save
-              seg_res.skater_id = skater.id
-              seg_res.save
-            }
+            # try order first
+            orders = parser.parse_skating_order(segment.order_url)
+            if (! orders.nil?) && (! orders.empty?)
+              orders.each {|data|
+                order = segment.skating_orders.find_or_create_by(starting_number: data[:starting_number])
+                ## yet: update skater info
+                order.update(data)
+                order.save
+              }
+            else
+              # try result then
+              seg_data = parser.parse_segment_result(segment.order_url)
+              seg_data.each {|k, vv|
+                seg_res = segment.segment_results.find_or_create_by(ranking: k)
+                seg_res.update(vv)
+                skater = Skater.find_or_create_by(name: vv[:skater_name])
+                skater.nation = vv[:skater_nation]
+                skater.isu_number = vv[:skater_isu_number]
+                skater.category = category.name
+                skater.save
+                seg_res.skater_id = skater.id
+                seg_res.save
+              }
+            end
             ## result
             segment.save
           }

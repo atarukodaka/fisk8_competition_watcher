@@ -15,6 +15,11 @@ module CompetitionWatcher
     enable :inline_templates
     include ERB::Util
 
+    helpers do
+      include CompetitionWatcher::Utils
+    end
+
+    ################
     get '/' do
       erb :home
     end
@@ -42,6 +47,9 @@ module CompetitionWatcher
       end
     end
 
+    get '/skating_order/:comp_key/:category/:segment' do
+      erb :skating_order
+    end
     get '/result/:comp_key/:category/:segment' do
       erb :segment_result
     end

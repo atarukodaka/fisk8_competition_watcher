@@ -79,7 +79,19 @@
        end %>
     <td><%= sto  %>
     <td><%= stj %>
-    <td><%= hash[:category] %> - <%= hash[:segment] %>
+    <td>
+
+      <%
+	 if (category = competition.categories.find_by_name(hash[:category])) && (segment = category.segments.find_by_name(hash[:segment])) && (!segment.skating_orders.empty?)
+%>
+<a href="/skating_order/<%= competition.key %>/<%= hash[:category] %>/<%= hash[:segment] %>"><%= hash[:category] %> - <%= hash[:segment] %></a>      
+<% else %>
+<%= hash[:category] %> - <%= hash[:segment] %>
+<% end %>
+
+
+
+
 
   <% } %>
       

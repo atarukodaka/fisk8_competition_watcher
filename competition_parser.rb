@@ -79,7 +79,6 @@ module Fisk8
           category = tds[2].text
             segment = tds[3].text
 
-            
             Time.zone = CompetitionWatcher::Utils.normalize_timezone(offset_timezone)
             starting_time = Time.zone.parse("#{date} #{time}")
             data[category][:segment][segment][:starting_time] = starting_time
@@ -88,9 +87,6 @@ module Fisk8
       end
       #return @categories = data
       return data
-    end
-    def adjust_time_zone(data, tz)
-      ## yet : new_offset
     end
 
     ################
@@ -168,10 +164,10 @@ module Fisk8
           if (text0 =~ /^\s*$/) && (tds[1].text =~ /Warm\-Up Group ([0-9]+)/)
             group_num = $1.to_i
           else
-            stn = tds[0].text
+            starting_number = tds[0].text
             name = tds[1].text
             nation = tds[2].text
-            data << {stn: stn, name: name, nation: nation, group: group_num}
+            data << {starting_number: starting_number, skater_name: name, skater_nation: nation, group: group_num}
           end
         }
         return data
