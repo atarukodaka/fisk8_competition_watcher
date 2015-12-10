@@ -65,16 +65,12 @@
 
 <table class="table table-hover">
   <tr>
-    <th>Starting Time (<%= competition[:timezone] %>)<th>Tokyo/Asia (+9)<th>Content
+    <th>Starting Time (<%= competition[:timezone] %>)<th>Tokyo/Asia (UTC<%= ActiveSupport::TimeZone.create("Asia/Tokyo").now.strftime("%z")[0..2] %>)<th>Content
   </tr>
   <% ar.sort_by {|item| item[:starting_time]}.each {|hash| %>
   <% dt = Date.new(hash[:starting_time].year, hash[:starting_time].month, hash[:starting_time].day) %>
   <tr class="<%= (classes[(dt - first_date) % classes.size]) %>">
-    <% timezone = competition[:timezone] 
-       if (timezone.to_i != 0) 
-         timezone = timezone.to_i
-       end
-     %>
+    <% timezone = CompetitionWatcher::Utils.normalize_timezone(competition[:timezone] ) %>
     <% sto = stj = "" %>
     <% if hash[:starting_time].nil? || hash[:starting_time] == Time.at(0)
        else

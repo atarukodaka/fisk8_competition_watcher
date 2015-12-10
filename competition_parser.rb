@@ -8,7 +8,7 @@ module Fisk8
   class CompetitionParser
     def initialize
       @agent = Mechanize.new
-      @nbsp = Nokogiri::HTML.parse("&nbsp;")
+      @nbsp = Nokogiri::HTML.parse("&nbsp;").text
     end
 
     def search_table_by_first_header(page, str)
@@ -78,8 +78,9 @@ module Fisk8
             time = tds[1].text
           category = tds[2].text
             segment = tds[3].text
+
             
-            Time.zone = offset_timezone || "UTC"
+            Time.zone = CompetitionWatcher::Utils.normalize_timezone(offset_timezone)
             starting_time = Time.zone.parse("#{date} #{time}")
             data[category][:segment][segment][:starting_time] = starting_time
           end
@@ -153,20 +154,44 @@ module Fisk8
       }
       return data
     end
+    ################
+    def parse_skating_order(url)
+      data = []
+      group_num = 1
+      page = @agent.get(url)
+      if table = search_table_by_first_header(page, "StN.")
+        table.search("./tr").each {|tr|
+          tds = tr.search("./td")
+          next if tds.empty?
 
+          text0 = tds[0].text.gsub(@nbsp, " ")
+          if (text0 =~ /^\s*$/) && (tds[1].text =~ /Warm\-Up Group ([0-9]+)/)
+            group_num = $1.to_i
+          else
+            stn = tds[0].text
+            name = tds[1].text
+            nation = tds[2].text
+            data << {stn: stn, name: name, nation: nation, group: group_num}
+          end
+        }
+        return data
+      end
+    end
+    ################
     def parse_category_entries(url)
       data = {}
       page = @agent.get(url)
-      table = search_table_by_first_header(page, "No.")
-      table.search("./tr").each {|tr|
-        tds = tr.search("./td")
-        next if tds.empty?
-        
-        number = tds[0].text
-        name = tds[1].text
-        nation = tds[2].text
-        data[number] = {number: number, name: name, nation: nation}
-      }
+      if table = search_table_by_first_header(page, "No.")
+        table.search("./tr").each {|tr|
+          tds = tr.search("./td")
+          next if tds.empty?
+
+          number = tds[0].text
+          name = tds[1].text
+          nation = tds[2].text
+          data[number] = {number: number, name: name, nation: nation}
+        }
+      end
       return data
     end
 
@@ -177,7 +202,8 @@ end
 
 if $0 == __FILE__
   parser = Fisk8::CompetitionParser.new
-  p parser.parse_segment_result("http://www.isuresults.com/results/season1516/gpjpn2015/SEG001.HTM")
+  p parser.parse_skating_order("http://www.isuresults.com/results/season1516/gpf1516/SEG001.HTM")
+  #p parser.parse_segment_result("http://www.isuresults.com/results/season1516/gpjpn2015/SEG001.HTM")
 end
 
 if false

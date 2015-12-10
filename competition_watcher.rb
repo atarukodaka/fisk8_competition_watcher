@@ -29,7 +29,14 @@ module CompetitionWatcher
         %Q[<a href="#{url}">text</a>]
       end
     end
+    def self.normalize_timezone(tz)
+      if tz =~ /^UTC(.*)$/
+        tz = $1.to_i
+      end
+      return tz || "UTC"
+    end
   end
+  ################################################################
   class Database
     def self.connect_database
       local_db_address = "postgresql://postgres@192.168.33.10/competition_db"
@@ -39,7 +46,7 @@ module CompetitionWatcher
 
     def initialize
       @log = Logger.new(STDERR)
-      self.connect_database
+      self.class.connect_database
     end
     def update
       # read input table
@@ -54,9 +61,9 @@ module CompetitionWatcher
         competition = Competition.find_by_key(c[:key])
         competition = Competition.create if competition.nil?
 
-        if (c[:timezone] =~ /^UTC([\+\-].*)/)
-          c[:timezone] = $1.to_i
-        end
+        #if (c[:timezone] =~ /^UTC([\+\-].*)/)
+        #  c[:timezone] = $1.to_i
+        #end
 
         headers.each {|h| competition[h] = c[h] }
         competition.save
@@ -131,6 +138,5 @@ if $0 == __FILE__
   watcher = CompetitionWatcher::Database.new
   watcher.update
   watcher.update_starting_time
-
   watcher.update_skaters
 end
