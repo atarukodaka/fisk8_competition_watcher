@@ -71,7 +71,7 @@ module CompetitionWatcher
         @log.info("#{c[:name]},  #{c[:site_url]}")
         
         site_url = c[:site_url]
-        parser = Fisk8::CompetitionParser.new
+        parser = CompetitionWatcher::Parser.new
         summary = parser.parse_summary(site_url, c[:timezone])
         
         ## 

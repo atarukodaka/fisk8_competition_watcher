@@ -14,6 +14,7 @@ module CompetitionWatcher
 
     enable :inline_templates
     include ERB::Util
+    include CompetitionWatcher::Utils
 
     helpers do
       include CompetitionWatcher::Utils

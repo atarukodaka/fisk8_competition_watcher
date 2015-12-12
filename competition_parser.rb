@@ -3,9 +3,11 @@ require 'mechanize'
 require 'json'
 require 'uri'
 require 'pry-byebug'
+require './competition_watcher'
 
-module Fisk8
-  class CompetitionParser
+module CompetitionWatcher
+  class Parser
+    include CompetitionWatcher::Utils
     def initialize
       @agent = Mechanize.new
       @nbsp = Nokogiri::HTML.parse("&nbsp;").text
@@ -35,13 +37,13 @@ module Fisk8
       return URI.join(site_url, td.search("a").attribute("href")).to_s
     end
     def parse_summary(site_url, offset_timezone="UTC")
-      #data = {entry_url: {}, result_url: {}, starting_order_url: {}, judge_score_url: {}, scheduled_date: {}}
+          #data = {entry_url: {}, result_url: {}, starting_order_url: {}, judge_score_url: {}, scheduled_date: {}}
       data = {}
 
       category = ""
       return {} if site_url.nil? || site_url == ""
       page = @agent.get(site_url)
-      
+
       main_summary_table =  search_main_summary_table(page)
       return {} if main_summary_table.nil?
       main_summary_table.search("tr")[1..-1].each {|tr|
@@ -76,10 +78,10 @@ module Fisk8
             date = tds[0].text
           else
             time = tds[1].text
-          category = tds[2].text
+            category = tds[2].text
             segment = tds[3].text
 
-            Time.zone = CompetitionWatcher::Utils.normalize_timezone(offset_timezone)
+            Time.zone = normalize_timezone(offset_timezone)
             starting_time = Time.zone.parse("#{date} #{time}")
             data[category][:segment][segment][:starting_time] = starting_time
           end
@@ -100,7 +102,7 @@ module Fisk8
       table.search("./tr").each {|tr|
         tds = tr.search("./td")
         next if tds.empty?
-        
+
         num = tds[0].text
         name = tds[1].text
         nation = tds[2].text
@@ -121,7 +123,7 @@ module Fisk8
       table.search("./tr").each {|tr|
         tds = tr.search("./td")
         next if tds.empty?
-        
+
         skater_isu_number = 0
         if a = tds[1].search("a")
           bio_url = a.attribute("href").value
@@ -190,16 +192,15 @@ module Fisk8
       end
       return data
     end
-
   end
-end
 
-################################################################
+  ################################################################
 
-if $0 == __FILE__
-  parser = Fisk8::CompetitionParser.new
-  p parser.parse_skating_order("http://www.isuresults.com/results/season1516/gpf1516/SEG001.HTM")
-  #p parser.parse_segment_result("http://www.isuresults.com/results/season1516/gpjpn2015/SEG001.HTM")
+  if $0 == __FILE__
+    parser = Fisk8::CompetitionParser.new
+    p parser.parse_skating_order("http://www.isuresults.com/results/season1516/gpf1516/SEG001.HTM")
+    #p parser.parse_segment_result("http://www.isuresults.com/results/season1516/gpjpn2015/SEG001.HTM")
+  end
 end
 
 if false

@@ -70,7 +70,7 @@
   <% ar.sort_by {|item| item[:starting_time]}.each {|hash| %>
   <% dt = Date.new(hash[:starting_time].year, hash[:starting_time].month, hash[:starting_time].day) %>
   <tr class="<%= (classes[(dt - first_date) % classes.size]) %>">
-    <% timezone = CompetitionWatcher::Utils.normalize_timezone(competition[:timezone] ) %>
+    <% timezone = normalize_timezone(competition[:timezone] ) %>
     <% sto = stj = "" %>
     <% if hash[:starting_time].nil? || hash[:starting_time] == Time.at(0)
        else
