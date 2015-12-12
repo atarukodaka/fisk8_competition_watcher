@@ -1,43 +1,5 @@
-# -*- coding: utf-8 -*-
-require 'active_support/core_ext/time/zones'
-require 'active_record'
-require 'yaml'
-require 'pg'
-require 'pry-byebug'
-require 'csv'
-require 'logger'
-
-require './model.rb'
-require './competition_parser.rb'
-
 module CompetitionWatcher
-  module Utils
-    def abbr(str)
-      case str
-      when "Short Program"; "SP"
-      when "Free Skating"; "FS"
-      when "Short Dance"; "SD"
-      when "Free Dance"; "FD"
-      else str
-      end
-    end
-
-    def link_to(url, text)
-      if url.to_s != ""
-        text
-      else
-        %Q[<a href="#{url}">text</a>]
-      end
-    end
-    def normalize_timezone(tz)
-      if tz =~ /^UTC(.*)$/
-        tz = $1.to_i
-      end
-      return tz || "UTC"
-    end
-  end
-  ################################################################
-  class Database
+  class Updator
     def self.connect_database
       local_db_address = "postgresql://postgres@192.168.33.10/competition_db"
       db_address = ENV['HEROKU_POSTGRESQL_TEAL_URL'] || local_db_address

@@ -3,10 +3,10 @@ BE = bundle exec
 
 
 update:
-	$(BE) ruby competition_watcher.rb
+	$(BE) ruby update.rb
 
 app:
-	$(BE) rackup -o 192.168.33.10 -p 9294
+	$(BE) rackup -o 192.168.33.10 -p 9292
 
 clean:
 	rm -rf *~

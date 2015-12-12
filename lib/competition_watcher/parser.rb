@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+
 require 'mechanize'
 require 'json'
 require 'uri'
 require 'pry-byebug'
-require './competition_watcher'
+#require './competition_watcher'
 
 module CompetitionWatcher
   class Parser

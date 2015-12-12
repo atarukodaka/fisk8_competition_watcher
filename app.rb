@@ -1,9 +1,11 @@
+$LOAD_PATH.push('./lib')
+
 require 'sinatra/base'
 require 'sinatra/reloader'
 
-require './competition_watcher'
+require 'competition_watcher'
 
-CompetitionWatcher::Database.connect_database
+CompetitionWatcher::Updator.connect_database
 
 module CompetitionWatcher
   class Application < Sinatra::Base
