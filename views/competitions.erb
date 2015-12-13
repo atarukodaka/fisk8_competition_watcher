@@ -1,8 +1,9 @@
+
 <h1>Competition List</h1>
 
-<table class="table table-striped table-hover">
+<table class="table table-hover">
   <tr>
-    <th>Class<th>Type<th>Season<th>Date<th>Timezone<th>Name<th>City, Country<th>References<th>Comment
+    <th>Class<th>Type<th>Season<th>Date<th>Timezone<th>Name<th>City, Country<th>References<th>Comment<th>to go / done
   </tr>
 
 <% competitions.each do |competition|%>
@@ -20,7 +21,8 @@
     <td><a href="competition/<%=h competition[:key] %>"><%=h competition[:name] %></a>
     <td><%=h competition[:city] %>, <%=h competition[:country] %>
     <td><a href="<%=h competition[:site_url]%>">[official result]</a>
-    <td><%=h competition[:comment] %>
-
+   <td><%=h competition[:comment] %>
+   <td><% word = time_ago_in_words(competition[:starting_date]) %>
+     <%= (competition[:ending_date] < now) ? "closed #{h word} ago" : (now > competition[:starting_date]) ? "ongoing" : " #{h word }to go" %> 
 <% end %>
 </table>

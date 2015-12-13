@@ -3,6 +3,10 @@ $LOAD_PATH.push('./lib')
 require 'sinatra/base'
 require 'sinatra/reloader'
 
+require 'action_view'
+require 'action_view/helpers'
+require 'action_view/helpers/date_helper'
+
 require 'competition_watcher'
 
 CompetitionWatcher::Updator.connect_database
@@ -17,6 +21,7 @@ module CompetitionWatcher
     enable :inline_templates
     include ERB::Util
     include CompetitionWatcher::Utils
+    include ActionView::Helpers::DateHelper  # for time_ago_in_words
 
     helpers do
       include CompetitionWatcher::Utils
