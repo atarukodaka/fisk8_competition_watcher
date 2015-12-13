@@ -1,0 +1,51 @@
+
+
+<% isu_number = params[:isu_number].to_i %>
+
+
+
+<% skater = Skater.find_by(isu_number: isu_number) %>
+
+
+<h1>Skater - <%=h skater.name %></h1>
+
+<h2>Biography</h2>
+
+<table class="table">
+  <tr>
+    <th>Name<td><%=h skater.name %>
+  </tr>
+  <tr>
+    <th>Nation<td><%=h skater.nation %>
+  </tr>
+  <tr>
+    <th>ISU Number<td><%= link_to(skater.isu_number, "http://www.isuresults.com/bios/isufs%08d.htm" % [skater.isu_number]) %>
+  </tr>
+  <tr>
+    <th>Category<td><%=h skater.category %>
+  </tr>
+</table>
+
+<h2>Competitions</h2>
+
+<table class="table">
+  <tr>
+    <th>Season<th>Competition<th>Category<th>Segment<th>Ranking<th>TSS<th>TES<th>PCS<th>Deductinos
+  </tr>
+  <% SegmentResult.where(skater_name: skater.name).each {|seg_res| %>
+  <tr>
+    <% segment = Segment.find_by(id: seg_res.segment_id) %>
+    <% category = Category.find_by(id: segment.category_id) %>
+    <% competition = Competition.find_by(id: category.competition_id) %>
+    <td><%=h competition.season %>
+    <td><%=h competition.name %>
+    <td><%=h category.name %>
+    <td><%=h segment.name %>
+    <td><%=h seg_res.ranking %>
+    <td><%=h seg_res.tss %>
+    <td><%=h seg_res.tes %>
+    <td><%=h seg_res.pcs %>
+    <td><%=h seg_res.deductions %>
+  <% } %>
+     
+</table>

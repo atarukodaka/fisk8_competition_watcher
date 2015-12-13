@@ -24,6 +24,7 @@ module CompetitionWatcher
     include CompetitionWatcher::Utils
     include ActionView::Helpers::DateHelper  # for time_ago_in_words
     include ActionView::Helpers::TagHelper
+    include ActionView::Helpers::UrlHelper
 
     helpers do
       include CompetitionWatcher::Utils
@@ -75,7 +76,8 @@ module CompetitionWatcher
     get '/skaters/men' do
       erb "hoge"
     end
-    get '/skater' do
+    get '/skater/:isu_number' do
+      erb :skater
     end
     ################################################################
     get '/request' do

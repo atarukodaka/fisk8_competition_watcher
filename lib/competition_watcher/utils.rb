@@ -10,13 +10,6 @@ module CompetitionWatcher
       end
     end
 
-    def link_to(url, text)
-      if url.to_s != ""
-        text
-      else
-        %Q[<a href="#{url}">text</a>]
-      end
-    end
     def normalize_timezone(tz)
       if tz =~ /^UTC(.*)$/
         tz = $1.to_i

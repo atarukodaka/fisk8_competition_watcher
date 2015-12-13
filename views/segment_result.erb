@@ -26,9 +26,14 @@
       <th>Ranking<th>Skater<th>Nation<th>TSS<th>TES<th>PCS<th>SS<th>TR<th>PE<th>CH<th>IN<th>Deduction<th>StartingNumber
     </tr>
   </thead>
-  <% segment.segment_results.each {|seg_res| %>
+  <% segment.segment_results.sort_by {|segr| segr.ranking.to_i }.each {|seg_res| %>
   <tr>
-    <% [:ranking, :skater_name, :skater_nation, :tss, :tes, :pcs, :components_ss, :components_tr, :components_pe, :components_ch, :components_in, :deductions, :starting_number].each {|key| %>
+    <td><%=h seg_res[:ranking] %>
+    <td>
+      <% skater = Skater.find_by(name: seg_res[:skater_name]) %>
+      <%= link_to(seg_res[:skater_name], "/skater/%d" % skater.isu_number) %>
+
+    <% [:skater_nation, :tss, :tes, :pcs, :components_ss, :components_tr, :components_pe, :components_ch, :components_in, :deductions, :starting_number].each {|key| %>
     <td><%=h seg_res[key] %>
     <% } %> 
 
