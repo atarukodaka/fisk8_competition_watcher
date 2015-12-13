@@ -21,7 +21,10 @@
     <td><%=h competition[:timezone] %>
     <td><a href="competition/<%=h competition[:key] %>"><%=h competition[:name] %></a>
     <td><%=h competition[:city] %>, <%=h competition[:country] %>
-    <td><a href="<%=h competition[:site_url]%>">[official result]</a>
+    <td>
+      <% if competition[:site_url].to_s != "" %>
+        <a href="<%=h competition[:site_url]%>">[official result]<span class="glyphicon glyphicon-link"></a>
+	  <% end %>
    <td><%=h competition[:comment] %>
    <td><% word = time_ago_in_words(competition[:starting_date]) %>
      <%= 

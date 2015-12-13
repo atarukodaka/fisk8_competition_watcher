@@ -6,6 +6,7 @@ require 'sinatra/reloader'
 require 'action_view'
 require 'action_view/helpers'
 require 'action_view/helpers/date_helper'
+require 'action_view/helpers/tag_helper'
 
 require 'competition_watcher'
 
@@ -22,6 +23,7 @@ module CompetitionWatcher
     include ERB::Util
     include CompetitionWatcher::Utils
     include ActionView::Helpers::DateHelper  # for time_ago_in_words
+    include ActionView::Helpers::TagHelper
 
     helpers do
       include CompetitionWatcher::Utils
