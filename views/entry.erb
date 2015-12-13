@@ -6,7 +6,7 @@
 
 <ul>
 <% comp.categories.each {|category| %>
-  <li>  <%= category.name %>
+  <li>  <%=h category.name %>
 <% } %>
 
 </ul>

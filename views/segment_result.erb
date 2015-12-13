@@ -9,9 +9,9 @@
   <ol class="breadcrumb">
     <li><a href="/">Home</a>
     <li><a href="/competitions">Competitions</a>
-    <li><a href="/competition/<%= competition.key %>"><%= competition.name %></a>
-    <li><%= category.name %>
-    <li><%= segment.name %>
+    <li><a href="/competition/<%=h competition.key %>"><%=h competition.name %></a>
+    <li><%=h category.name %>
+    <li><%=h segment.name %>
   </ol>
 </nav>
 <hr>
@@ -29,7 +29,7 @@
   <% segment.segment_results.each {|seg_res| %>
   <tr>
     <% [:ranking, :skater_name, :skater_nation, :tss, :tes, :pcs, :components_ss, :components_tr, :components_pe, :components_ch, :components_in, :deductions, :starting_number].each {|key| %>
-    <td><%= seg_res[key] %>
+    <td><%=h seg_res[key] %>
     <% } %> 
 
   <% } %>

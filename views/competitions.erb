@@ -11,16 +11,16 @@
 
   status = (now > competition[:ending_date]) ? "warning" : (now > competition[:starting_date]) ? "success" : "default"
 %>
-  <tr class="<%= status %>">
-    <td><%= competition[:competition_class] %>
-    <td><%= competition[:competition_type] %>
-    <td><%= competition[:season] %>
-    <td><%= competition[:starting_date].strftime("%Y/%m/%d(%a)") %>-<%= competition[:ending_date].strftime("%m/%d(%a)") %>
-    <td><%= competition[:timezone] %>
-    <td><a href="competition/<%= competition[:key] %>"><%= competition[:name] %></a>
-    <td><%= competition[:city] %>, <%= competition[:country] %>
-    <td><a href="<%= competition[:site_url]%>">[official result]</a>
-    <td><%= competition[:comment] %>
+  <tr class="<%=h status %>">
+    <td><%=h competition[:competition_class] %>
+    <td><%=h competition[:competition_type] %>
+    <td><%=h competition[:season] %>
+    <td><%=h competition[:starting_date].strftime("%Y/%m/%d(%a)") %>-<%=h competition[:ending_date].strftime("%m/%d(%a)") %>
+    <td><%=h competition[:timezone] %>
+    <td><a href="competition/<%=h competition[:key] %>"><%=h competition[:name] %></a>
+    <td><%=h competition[:city] %>, <%=h competition[:country] %>
+    <td><a href="<%=h competition[:site_url]%>">[official result]</a>
+    <td><%=h competition[:comment] %>
 
 <% end %>
 </table>

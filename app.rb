@@ -31,7 +31,7 @@ module CompetitionWatcher
       competitions = Competition.all.order("starting_date desc")
 
       erb competitions.map {|c|
-        %Q[<li>#{c[:key]} / <a href="/competition?key=#{c[:key]}">#{c[:name]}</a>]
+        %Q[<li>#{h c[:key]} / <a href="/competition?key=#{h c[:key]}">#{h c[:name]}</a>]
       }.join("")
       
       erb :competitions, locals: {competitions: competitions}
@@ -46,7 +46,7 @@ module CompetitionWatcher
       if competition = Competition.find_by_key(key)
         erb :competition, locals: {competition: competition}
       else
-        erb "#{CGI.escapeHTML(key)} not found"
+        erb "#{h key} not found"
       end
     end
 

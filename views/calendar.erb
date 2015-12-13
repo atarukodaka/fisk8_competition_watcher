@@ -24,11 +24,11 @@
    
 %>
 
-<h1>Calendar - <%= first_date.strftime("%b %Y") %></h1>
+<h1>Calendar - <%=h first_date.strftime("%b %Y") %></h1>
 
 <nav>
-<a href="/calendar?year=<%= first_date.prev_month.year %>&month=<%= first_date.prev_month.month %>">&lt;&lt;</a>
-<a href="/calendar?year=<%= first_date.next_month.year %>&month=<%= first_date.next_month.month %>">&gt;&gt;</a>
+<a href="/calendar?year=<%=h first_date.prev_month.year %>&month=<%=h first_date.prev_month.month %>">&lt;&lt;</a>
+<a href="/calendar?year=<%=h first_date.next_month.year %>&month=<%=h first_date.next_month.month %>">&gt;&gt;</a>
 
 </nav>
 
@@ -44,18 +44,18 @@
       <% date = first_date + day - 1 %>
       <% is_this_month = (day < 1 || day > last_day) ? false : true %>
       <% date_td_class = (date == Date.today) ? "today" : "" %>
-    <td class="<%= date_td_class %>">
+    <td class="<%=h date_td_class %>">
       <% if is_this_month %>
-        <div class="day_this_month"><%= date.day %></div>
+        <div class="day_this_month"><%=h date.day %></div>
       <% else %>
-        <div>(<%= date.day %>)</div>
+        <div>(<%=h date.day %>)</div>
       <% end %>
 
       <% comps = Competition.where("starting_date <= ?", date).where("ending_date >= ?", date) %>
       <% comps.each {|comp| %>
       <div>
 	<div class="competition_name">
-	  <a href="/competition/<%= comp.key %>"><%= comp.shortname%></a>
+	  <a href="/competition/<%=h comp.key %>"><%=h comp.shortname%></a>
 	</div>
 	<ul>
 	<% comp.categories.each {|category|
@@ -64,7 +64,7 @@
 	  <% next if starting_time.nil? %>
 	  <% starting_date = Date.new(starting_time.year, starting_time.month, starting_time.day) %>
 	  <% if starting_date == date %>
-	    <li><%= category.name %> - <%= CompetitionWatcher::Utils.abbr(segment.name) %></li>
+	    <li><%=h category.name %> - <%=h CompetitionWatcher::Utils.abbr(segment.name) %></li>
 	  <% end %>
 	<% } } %>
 	</ul>

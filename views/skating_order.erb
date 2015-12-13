@@ -8,9 +8,9 @@
   <ol class="breadcrumb">
     <li><a href="/">Home</a>
     <li><a href="/competitions">Competitions</a>
-    <li><a href="/competition/<%= competition.key %>"><%= competition.name %></a>
-    <li><%= category.name %>
-    <li><%= segment.name %>
+    <li><a href="/competition/<%=h competition.key %>"><%=h competition.name %></a>
+    <li><%=h category.name %>
+    <li><%=h segment.name %>
   </ol>
 </nav>
 <hr>
@@ -29,10 +29,10 @@
 
 <h3>Assumptions of Elapse Time:</h3>
 <ul>
-  <li>Warm Up: <%= warm_up_time / 60 %>min
-  <li>Short Program: <%= playing_time[:sp] / 60 %>min
-  <li>Free Skating for Men: <%= playing_time[:fs_men] / 60 %>min
-  <li>Free Skating for ex Men: <%= playing_time[:fs_not_men] / 60 %>min
+  <li>Warm Up: <%=h warm_up_time / 60 %>min
+  <li>Short Program: <%=h playing_time[:sp] / 60 %>min
+  <li>Free Skating for Men: <%=h playing_time[:fs_men] / 60 %>min
+  <li>Free Skating for ex Men: <%=h playing_time[:fs_not_men] / 60 %>min
 </ul>
 
 
@@ -40,7 +40,7 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th>Starting Number<th>Skater<th>Nation<th>Group<th>Expected Starting Time (<%= competition.timezone %>)<th>Expected Starting Time (Asia/Tokyko)
+      <th>Starting Number<th>Skater<th>Nation<th>Group<th>Expected Starting Time (<%=h competition.timezone %>)<th>Expected Starting Time (Asia/Tokyko)
     </tr>
   </thead>
 
@@ -59,16 +59,16 @@
   %>
   <% segment.skating_orders.each {|order| %>
     <% if order.group.to_i > group; starting_time += warm_up_time; group = order.group.to_i; %>
-      <tr class="info"><td>-<td>Warming Up Group <%= group %><td><td><td><td>
+      <tr class="info"><td>-<td>Warming Up Group <%=h group %><td><td><td><td>
     <% end %>
     <tr>
     <% [:starting_number, :skater_name, :skater_nation, :group].each {|key| %>
-    <td><%= order[key] %>
+    <td><%=h order[key] %>
     <% } %> 
     <td>
-      <%= starting_time.in_time_zone(normalize_timezone(timezone)) %>
+      <%=h starting_time.in_time_zone(normalize_timezone(timezone)) %>
     <td>
-      <%= starting_time.in_time_zone("Asia/Tokyo") %>      
+      <%=h starting_time.in_time_zone("Asia/Tokyo") %>      
       <% starting_time += 6.5 * 60 %>
   <% } %>
 

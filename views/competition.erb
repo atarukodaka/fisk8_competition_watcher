@@ -8,23 +8,23 @@
 <hr>
 <!-- ================================================================ -->
 
-<h1><%= competition[:name] %></h1>
+<h1><%=h competition[:name] %></h1>
 
 <table class="table">
   <tr>
-    <th>Location<td><%= competition[:city] %>, <%= competition[:country] %>
+    <th>Location<td><%=h competition[:city] %>, <%=h competition[:country] %>
   </tr>
   <tr>
     <th>Date</th>
-    <td><%= competition[:starting_date].strftime("%Y/%m/%d") %> -
-      <%= competition[:ending_date].strftime("%Y/%m/%d") %>
+    <td><%=h competition[:starting_date].strftime("%Y/%m/%d") %> -
+      <%=h competition[:ending_date].strftime("%Y/%m/%d") %>
     </td>
   </tr>
   <tr>
     <th>
       Official Site
     <td>
-      <a href="<%= competition[:site_url] %>" target="_blank">Result</a>
+      <a href="<%=h competition[:site_url] %>" target="_blank">Result</a>
   </tr>
 </table>
 
@@ -37,14 +37,14 @@
 </thead>
 <% competition.categories.each {|category| %>
 <tr>
-  <td><%= category.name %>
-  <td><a href="<%= category[:entry_url] %>">entry<a>
+  <td><%=h category.name %>
+  <td><a href="<%=h category[:entry_url] %>">entry<a>
    <% segment = category.segments %>
-  <td><a href="/result/<%= competition[:key]%>/<%= category.name %>/<%= segment.first.name %>"><%= segment.first.name %></a> (<a href="<%= segment.first.score_url %>">judge score</a>)
+  <td><a href="/result/<%=h competition[:key]%>/<%=h category.name %>/<%=h segment.first.name %>"><%=h segment.first.name %></a> (<a href="<%=h segment.first.score_url %>">judge score</a>)
   <td><% if segment.second %>
-         <a href="/result/<%= competition[:key]%>/<%= category.name %>/<%= segment.second.name %>"><%= segment.second.name %></a> (<a href="<%= segment.second.score_url %>">judge score</a>)
+         <a href="/result/<%=h competition[:key]%>/<%=h category.name %>/<%=h segment.second.name %>"><%=h segment.second.name %></a> (<a href="<%=h segment.second.score_url %>">judge score</a>)
       <% end %>
-  <td><a href="<%= category.result_url %>">result</a>
+  <td><a href="<%=h category.result_url %>">result</a>
 <% } %>
 </table>
 
@@ -65,11 +65,11 @@
 
 <table class="table table-hover">
   <tr>
-    <th>Starting Time (<%= competition[:timezone] %>)<th>Tokyo/Asia (UTC<%= ActiveSupport::TimeZone.create("Asia/Tokyo").now.strftime("%z")[0..2] %>)<th>Content
+    <th>Starting Time (<%=h competition[:timezone] %>)<th>Tokyo/Asia (UTC<%=h ActiveSupport::TimeZone.create("Asia/Tokyo").now.strftime("%z")[0..2] %>)<th>Content
   </tr>
   <% ar.sort_by {|item| item[:starting_time]}.each {|hash| %>
   <% dt = Date.new(hash[:starting_time].year, hash[:starting_time].month, hash[:starting_time].day) %>
-  <tr class="<%= (classes[(dt - first_date) % classes.size]) %>">
+  <tr class="<%=h (classes[(dt - first_date) % classes.size]) %>">
     <% timezone = normalize_timezone(competition[:timezone] ) %>
     <% sto = stj = "" %>
     <% if hash[:starting_time].nil? || hash[:starting_time] == Time.at(0)
@@ -77,16 +77,16 @@
          sto = hash[:starting_time].in_time_zone(timezone).strftime("%Y/%m/%d %H:%M")
          stj = hash[:starting_time].in_time_zone("Tokyo").strftime("%Y/%m/%d %H:%M")
        end %>
-    <td><%= sto  %>
-    <td><%= stj %>
+    <td><%=h sto  %>
+    <td><%=h stj %>
     <td>
 
       <%
 	 if (category = competition.categories.find_by_name(hash[:category])) && (segment = category.segments.find_by_name(hash[:segment])) && (!segment.skating_orders.empty?)
 %>
-<a href="/skating_order/<%= competition.key %>/<%= hash[:category] %>/<%= hash[:segment] %>"><%= hash[:category] %> - <%= hash[:segment] %></a>      
+<a href="/skating_order/<%=h competition.key %>/<%=h hash[:category] %>/<%=h hash[:segment] %>"><%=h hash[:category] %> - <%=h hash[:segment] %></a>      
 <% else %>
-<%= hash[:category] %> - <%= hash[:segment] %>
+<%=h hash[:category] %> - <%=h hash[:segment] %>
 <% end %>
 
 
