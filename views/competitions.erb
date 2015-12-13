@@ -8,11 +8,12 @@
 
 <% competitions.each do |competition|%>
 <%  now = Time.now
-  status = (now > competition[:ending_date]) ? "done" : (now > competition[:starting_date]) ? "ongoing" : "incomming"
+  status = (now > competition[:ending_date]+1) ? :done : (now > competition[:starting_date]) ? :ongoing : :incomming
 
-  status = (now > competition[:ending_date]) ? "warning" : (now > competition[:starting_date]) ? "success" : "default"
+   status_info = {done: "warning", ongoing: "success", incomming: "default"}
+
 %>
-  <tr class="<%=h status %>">
+  <tr class="<%=h status_info[status] %>">
     <td><%=h competition[:competition_class] %>
     <td><%=h competition[:competition_type] %>
     <td><%=h competition[:season] %>
@@ -23,6 +24,15 @@
     <td><a href="<%=h competition[:site_url]%>">[official result]</a>
    <td><%=h competition[:comment] %>
    <td><% word = time_ago_in_words(competition[:starting_date]) %>
-     <%= (competition[:ending_date] < now) ? "closed #{h word} ago" : (now > competition[:starting_date]) ? "ongoing" : " #{h word }to go" %> 
+     <%= 
+	case status;
+	  when :done
+	    "closed #{h word} ago"
+	  when :ongoing
+	    "ongoing"
+	  else
+	   "#{h word} to go"
+	end
+	%>
 <% end %>
 </table>
