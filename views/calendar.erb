@@ -64,7 +64,7 @@
 	  <% next if starting_time.nil? %>
 	  <% starting_date = Date.new(starting_time.year, starting_time.month, starting_time.day) %>
 	  <% if starting_date == date %>
-	    <li><%=h category.name %> - <%=h CompetitionWatcher::Utils.abbr(segment.name) %></li>
+	    <li><%=h category.name %> - <%=h abbr(segment.name) %></li>
 	  <% end %>
 	<% } } %>
 	</ul>

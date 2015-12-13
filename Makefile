@@ -6,7 +6,7 @@ update:
 	$(BE) ruby update.rb
 
 app:
-	$(BE) rackup -o 192.168.33.10 -p 9294
+	$(BE) rackup -o 192.168.33.10 -p 9295
 
 clean:
 	rm -rf *~
