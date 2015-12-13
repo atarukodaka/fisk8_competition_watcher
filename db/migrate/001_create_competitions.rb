@@ -6,7 +6,7 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :nation
       t.string :category
 
-      t.timestamp
+      t.timestamps
     end
 
     create_table :competitions do |t|
@@ -29,7 +29,7 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :updating
       t.string :status
 
-      t.timestamp
+      t.timestamps
     end
 
     create_table :categories do |t|
@@ -38,6 +38,7 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :result_url
 
       t.belongs_to :competition
+      t.timestamps
     end
 
     create_table :segments do |t|
@@ -52,6 +53,7 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :pcs
       
       t.belongs_to :category
+      t.timestamps
     end
 
     create_table :skating_orders do |t|
@@ -63,6 +65,7 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :group
 
       t.belongs_to :segment
+      t.timestamps
     end
 
     create_table :segment_results do |t|
@@ -87,6 +90,7 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :starting_number
 
       t.belongs_to :segment
+      t.timestamps
     end
   end
 end

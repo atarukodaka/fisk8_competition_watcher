@@ -19,19 +19,21 @@ module CompetitionWatcher
 
       tbl.each {|c|   ## for each competitions
         next if c[:name].nil? || c[:updating] == "skip"
-       ## database
-        competition = Competition.find_by_key(c[:key])
-        competition = Competition.create if competition.nil?
-
-        #if (c[:timezone] =~ /^UTC([\+\-].*)/)
-        #  c[:timezone] = $1.to_i
-        #end
-
+        @log.info("#{c[:name]},  #{c[:site_url]}")
+        competition = Competition.find_by(key: c[:key])        
+        if competition.nil?
+          competition = Competition.create(key: c[:key])
+        elsif (c[:updating] != "force") && (c[:site_url].to_s != "")
+          agent = Mechanize.new
+          last_modified = agent.head(c[:site_url])["last-modified"]
+          if last_modified < competition.updated_at
+            @log.info(" --- skip")
+            next
+          end
+        end
         headers.each {|h| competition[h] = c[h] }
         competition.save
-
-        @log.info("#{c[:name]},  #{c[:site_url]}")
-        
+      
         site_url = c[:site_url]
         parser = CompetitionWatcher::Parser.new
         summary = parser.parse_summary(site_url, c[:timezone])

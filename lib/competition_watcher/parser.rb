@@ -47,6 +47,7 @@ module CompetitionWatcher
 
       main_summary_table =  search_main_summary_table(page)
       return {} if main_summary_table.nil?
+
       main_summary_table.search("tr")[1..-1].each {|tr|
         tds = tr / "td"
         next if tds[0].nil?
@@ -126,9 +127,9 @@ module CompetitionWatcher
         next if tds.empty?
 
         skater_isu_number = 0
-        if a = tds[1].search("a")
-          bio_url = a.attribute("href").value
-          if bio_url.match("http://www.isuresults.com/bios/isufs([0-9]+)\.htm")
+        if !(a = tds[1].search("a")).empty?
+          bio_url = a.attribute("href").try(:value)
+          if !bio_url.nil? && bio_url.match("http://www.isuresults.com/bios/isufs([0-9]+)\.htm")
             skater_isu_number = $1.to_i
           end
         end
