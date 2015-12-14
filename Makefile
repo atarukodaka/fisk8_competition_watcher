@@ -5,6 +5,9 @@ BE = bundle exec
 update:
 	$(BE) ruby update.rb
 
+update_nationals:
+	$(BE) ruby update.rb nationals
+
 app:
 	$(BE) rackup -o 192.168.33.10 -p 9295
 

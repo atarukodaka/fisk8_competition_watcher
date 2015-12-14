@@ -5,6 +5,7 @@ require 'json'
 require 'uri'
 require 'pry-byebug'
 #require './competition_watcher'
+require 'logger'
 
 module CompetitionWatcher
   class Parser
@@ -12,13 +13,11 @@ module CompetitionWatcher
     def initialize
       @agent = Mechanize.new
       @nbsp = Nokogiri::HTML.parse("&nbsp;").text
+      @log = Logger.new(STDERR)
     end
 
     def search_table_by_first_header(page, str)
-
-      tables = page / "table"
-
-      tables.each {|table|
+      page.search("table").each {|table|
         elem =  table / "./tr[1]/th[1]"
         return table if elem.text.gsub(@nbsp, " ") == str
         elem =  table / "./tr[1]/td[1]"
@@ -33,12 +32,10 @@ module CompetitionWatcher
       search_table_by_first_header(page, "Date")
     end
     def get_href_on_td(site_url, td)
-      return "" if td.nil?
-      return "" if td.search("a").empty?
+      return "" if td.nil? || td.search("a").empty?
       return URI.join(site_url, td.search("a").attribute("href")).to_s
     end
     def parse_summary(site_url, offset_timezone="UTC")
-          #data = {entry_url: {}, result_url: {}, starting_order_url: {}, judge_score_url: {}, scheduled_date: {}}
       data = {}
 
       category = ""
@@ -50,8 +47,8 @@ module CompetitionWatcher
 
       main_summary_table.search("tr")[1..-1].each {|tr|
         tds = tr / "td"
-        next if tds[0].nil?
-
+        next if tds.empty?
+        
         if tds[0].text != "" && tds[0].text.ord != 160
           category = tds[0].text
           entry_url = get_href_on_td(site_url, tds[2])
@@ -89,33 +86,10 @@ module CompetitionWatcher
           end
         }
       end
-      #return @categories = data
       return data
     end
 
     ################
-    def search_result_table(page)
-      return search_table_by_first_header(page, "FPl.")
-    end
-    def parse_category_result(category, result_url)
-      data = {}
-      page = @agent.get(result_url)
-      table = search_result_table(page)
-      table.search("./tr").each {|tr|
-        tds = tr.search("./td")
-        next if tds.empty?
-
-        num = tds[0].text
-        name = tds[1].text
-        nation = tds[2].text
-        points = tds[3].text
-        sp = tds[4].text
-        fs = tds[5].text
-        data[num] = {num: num, name: name, nation: nation, points: points, sp: sp, fs: fs}
-      }
-      return data
-    end
-
     def parse_segment_result(result_url)
       data = {}
       page = @agent.get(result_url)
@@ -150,7 +124,6 @@ module CompetitionWatcher
           deductions: tds[12].text,
           starting_number: tds[13].text.gsub("#", "").gsub(" ", "")
         }
-        #data[ranking] = {ranking: ranking, name: name, nation: nation, points: points, sp: sp, fs: fs}
       }
       return data
     end
@@ -194,15 +167,112 @@ module CompetitionWatcher
       end
       return data
     end
+    def parse_category_result(url)
+      data = []
+      begin
+        page = @agent.get(url)
+      rescue Mechanize::ResponseCodeError => e
+        case e.response_code
+        when "404"
+          @log.warn("not found: #{url}")
+          return data
+        end
+      end
+      if table = search_table_by_first_header(page, "FPl.")
+        table.search("./tr").each {|tr|
+          tds = tr.search("./td")
+          next if tds.empty?
+          
+          hash = {
+            ranking: tds[0].text.to_i,
+            skater_name: tds[1].text,
+            skater_nation: tds[2].text,
+            points: tds[3].text
+          }
+          if tds.size == 6
+            hash[:sp_ranking] = tds[4].text.to_i
+            hash[:fs_ranking] = tds[5].text.to_i
+          elsif tds.size == 5
+            hash[:sp_ranking] = tds[4].text.to_i
+          end
+          data << hash
+        }
+      end
+      return data
+    end
+      
+    def parse_ws
+      data = []
+      ["Men", "Ladies", "Pairs", "Ice Dance"].each {|category|
+        data << parse_ws_category(category)
+      }
+      return data.flatten
+    end
+    def parse_ws_category(category)
+      url = "http://www.isuresults.com/ws/ws/"
+      case category
+      when "Men"
+        url += "wsmen.htm"
+      when "Ladies"
+        url += "wsladies.htm"
+      when "Pairs"
+        url += "wspairs.htm"
+      when "Ice Dance"
+        url += "wsdance.htm"
+      else
+        raise "invalid category: '#{category}'"
+      end
+      data = []
+      page = @agent.get(url)
+      page.search("table#DataList1.results/tr.content").each {|tr|
+        tds = tr.search("./td")
+        ws_ranking = tds[0].text.to_i
+        ws_points = tds[1].text.to_i
+        name = tds[2].search("./a").text
+        href = tds[2].search("./a").attribute("href")
+        
+        if !href.nil?
+          href.value =~ /\/bios\/isufs([0-9]+)\.htm/
+          isu_number = $1.to_i
+        end
+        nation = tds[2].search("span").text
+        data << {name: name, nation: nation, ws_ranking: ws_ranking, ws_points: ws_points, isu_number: isu_number, category: category}
+      }
+      return data
+    end
+    def parse_nationals(url)
+      data = []
+      page = @agent.get(url)
+      page.search("table")[0].search("./tr")[1..-1].each {|tr|
+        tds = tr.search("./td")
+        date_range = tds[0].text
+        city = tds[1].text
+        name = tds[3].text.gsub(/[\n\s]*/, "")
+        site_url = get_href_on_td(url, tds[3])
+        dates = date_range.split("-")
+        Time.zone = "Tokyo"
+        starting_date = Time.zone.parse(dates[0])
+        if dates[1] =~ /([0-9]+)\.([0-9]+)/
+          m = $1; d = $2
+        else
+          m = starting_date.month
+          d = dates[1].to_i
+        end
+        ending_date = Time.zone.parse("%d/%d/%d" % [starting_date.year, m, d])
+        data.push({competition_type: "Nationals", hosted_by: "Japan Fed", name: name, city: city, country: "Japan", timezone: "Tokyo", starting_date: starting_date.strftime("%Y/%m/%d"), ending_date: ending_date.strftime("%Y/%m/%d"), site_url: site_url})
+      }
+      return data
+    end
   end
+end
 
   ################################################################
 
-  if $0 == __FILE__
-    parser = Fisk8::CompetitionParser.new
-    p parser.parse_skating_order("http://www.isuresults.com/results/season1516/gpf1516/SEG001.HTM")
-    #p parser.parse_segment_result("http://www.isuresults.com/results/season1516/gpjpn2015/SEG001.HTM")
-  end
+if $0 == __FILE__
+  parser = Fisk8::CompetitionParser.new
+  parser.parse_nationals("http://www.jsfresults.com/National/2015-2016/fs_j/index.htm")
+  p parser.parse_skating_order("http://www.isuresults.com/results/season1516/gpf1516/SEG001.HTM")
+  #p parser.parse_segment_result("http://www.isuresults.com/results/season1516/gpjpn2015/SEG001.HTM")
 end
 
 if false

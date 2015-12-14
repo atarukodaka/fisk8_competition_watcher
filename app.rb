@@ -61,6 +61,9 @@ module CompetitionWatcher
     get '/skating_order/:comp_key/:category/:segment' do
       erb :skating_order
     end
+    get '/result/:comp_key/:category' do
+      erb :category_result
+    end
     get '/result/:comp_key/:category/:segment' do
       erb :segment_result
     end

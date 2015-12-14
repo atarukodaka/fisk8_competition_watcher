@@ -55,7 +55,7 @@
       <% comps.each {|comp| %>
       <div>
 	<div class="competition_name">
-	  <a href="/competition/<%=h comp.key %>"><%=h comp.shortname%></a>
+	  <a href="/competition/<%=h comp.key %>"><%=h comp.shortname || comp.name%></a>
 	</div>
 	<ul>
 	<% comp.categories.each {|category|

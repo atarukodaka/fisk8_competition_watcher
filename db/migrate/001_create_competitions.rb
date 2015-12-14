@@ -5,8 +5,10 @@ class CreateCompetitions < ActiveRecord::Migration
       t.integer :isu_number
       t.string :nation
       t.string :category
+      t.integer :ws_ranking
+      t.integer :ws_points
 
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :competitions do |t|
@@ -19,17 +21,17 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :hosted_by
       t.string :country
       t.string :city
-      t.date :starting_date
-      t.date :ending_date
-      t.string :timezone
+      t.date :starting_date, default: Time.at(0)
+      t.date :ending_date, default: Time.at(0)
+      t.string :timezone, default: 'UST'
       t.string :site_url
       t.string :comment
 
-      t.string :parser
+      t.string :parser, default: 'ISU'
       t.string :updating
       t.string :status
 
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :categories do |t|
@@ -38,12 +40,12 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :result_url
 
       t.belongs_to :competition
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :segments do |t|
       t.string :name
-      t.datetime :starting_time
+      t.datetime :starting_time, default: Time.at(0)
       t.string :order_url
       t.string :score_url
 
@@ -53,7 +55,7 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :pcs
       
       t.belongs_to :category
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :skating_orders do |t|
@@ -65,7 +67,23 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :group
 
       t.belongs_to :segment
-      t.timestamps
+      t.timestamps null: false
+    end
+
+    create_table :category_results do |t|
+      t.string :ranking
+
+      t.string :skater_name
+      t.string :skater_nation
+      t.integer :skater_isu_number
+      t.references :skater
+
+      t.string :points
+      t.integer :sp_ranking
+      t.integer :fs_ranking
+
+      t.belongs_to :category
+      t.timestamps null: false
     end
 
     create_table :segment_results do |t|
@@ -90,7 +108,7 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :starting_number
 
       t.belongs_to :segment
-      t.timestamps
+      t.timestamps null: false
     end
   end
 end

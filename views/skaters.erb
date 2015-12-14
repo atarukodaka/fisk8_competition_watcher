@@ -1,26 +1,38 @@
 <h1>Skaters</h1>
 
 
-<h2>World Standings (ISU site)</h2>
 <ul>
-  <li><a href="http://www.isuresults.com/ws/ws/wsmen.htm">Men</a>
-  <li><a href="http://www.isuresults.com/ws/ws/wsladies.htm">Ladies</a>
-  <li><a href="http://www.isuresults.com/ws/ws/wspairs.htm">Pairs</a>
-  <li><a href="http://www.isuresults.com/ws/ws/wsdance.htm">Ice Dance</a>
-</ul>
+  <li>World Standings (ISU site)
+  <a href="http://www.isuresults.com/ws/ws/wsmen.htm">Men</a> / 
+  <a href="http://www.isuresults.com/ws/ws/wsladies.htm">Ladies</a> / 
+  <a href="http://www.isuresults.com/ws/ws/wspairs.htm">Pairs</a> / 
+  <a href="http://www.isuresults.com/ws/ws/wsdance.htm">Ice Dance</a>
 
-<h2>Biographies</h2>
+<li>Biographies
 
-<ul>
-  <li><a href="http://www.isuresults.com/bios/fsbiosmen.htm">Men</a>
-  <li><a href="http://www.isuresults.com/bios/fsbiosladies.htm">Ladies</a>
-  <li><a href="http://www.isuresults.com/bios/fsbiospairs.htm">Pairs</a>
-  <li><a href="http://www.isuresults.com/bios/fsbiosdance.htm">Ice Dance</a>
+<a href="http://www.isuresults.com/bios/fsbiosmen.htm">Men</a> / 
+<a href="http://www.isuresults.com/bios/fsbiosladies.htm">Ladies</a> / 
+<a href="http://www.isuresults.com/bios/fsbiospairs.htm">Pairs</a> / 
+<a href="http://www.isuresults.com/bios/fsbiosdance.htm">Ice Dance</a>
 </ul>
 
 <h2>Skater Info (in-site)</h2>
 
-<ul>
-  <li>
-</ul>
+<a href="/skaters/men">Men</a> / 
+<a href="/skaters/ladies">Ladies</a> / 
+<a href="/skaters/pairs">Pairs</a> / 
+<a href="/skaters/dance">Ice Dance</a>
+
+<table class="table">
+  <tr>
+    <th>WS Ranking<th>Name<th>Nation<th>points
+  </tr>
+<% Skater.where("category = 'Men'", "ws_ranking > 200").each {|skater| %>
+  <tr>
+    <td><%=h skater.ws_ranking %>
+    <td><%= link_to(h(skater.name), "/skater/#{skater.isu_number}") %>
+    <td><%=h skater.nation %>
+    <td><%=h skater.ws_points %>
+<% } %>
+</table>
 

@@ -1,3 +1,6 @@
+require 'logger'
+require 'active_record'
+
 module CompetitionWatcher
   class Updator
     def self.connect_database
@@ -8,32 +11,34 @@ module CompetitionWatcher
 
     def initialize
       @log = Logger.new(STDERR)
+      @competition_csv_filename = "competitions.csv"
       self.class.connect_database
     end
     def update
       # read input table
-      competition_csv_filename = "competitions.csv"
-      @log.info(" read #{competition_csv_filename}...")
-      tbl = CSV::table(competition_csv_filename, encoding: "Shift_JIS:UTF-8")
+      @log.info(" read #{@competition_csv_filename}...")
+      tbl = CSV::table(@competition_csv_filename, encoding: "Shift_JIS:UTF-8")
       headers = tbl.headers
 
       tbl.each {|c|   ## for each competitions
-        next if c[:name].nil? || c[:updating] == "skip"
-        @log.info("#{c[:name]},  #{c[:site_url]}")
-        competition = Competition.find_by(key: c[:key])        
-        if competition.nil?
-          competition = Competition.create(key: c[:key])
-        elsif (c[:updating] != "force") && (c[:site_url].to_s != "")
+        next if c[:key].nil? || c[:updating] == "skip"
+        @log.info("#{:key}: #{c[:name]} on  #{c[:site_url]}")
+        created = false
+        competition = Competition.find_or_create_by(key: c[:key]){
+          created = true
+        }
+        headers.each {|h| competition[h] = c[h] }
+        competition.save
+        if (!created) && (c[:updating] != "force") && (c[:site_url].to_s != "")
           agent = Mechanize.new
           last_modified = agent.head(c[:site_url])["last-modified"]
           if last_modified < competition.updated_at
-            @log.info(" --- skip")
+            @log.info(" --- skip as not modified")
             next
           end
         end
-        headers.each {|h| competition[h] = c[h] }
-        competition.save
-      
+
+
         site_url = c[:site_url]
         parser = CompetitionWatcher::Parser.new
         summary = parser.parse_summary(site_url, c[:timezone])
@@ -45,6 +50,15 @@ module CompetitionWatcher
           category.entry_url = value[:entry_url]
           category.result_url = value[:result_url]
           category.save
+
+          ## category result
+          data = parser.parse_category_result(category.result_url)
+          data.each {|item|
+            category.category_results.find_or_create_by(ranking: item[:ranking]){|res|
+              res.update(item)
+              Skater.find_or_create_by(name: item[:skater_name])
+            }
+          }
           ## segment
           value[:segment].each {|seg, v|
             @log.info("  segment of #{seg}")
@@ -94,7 +108,7 @@ module CompetitionWatcher
     end
     def set_starting_time(comp_key, cat, seg, time_str)
       if competition = Competition.find_by_key(comp_key)
-        @log.info("set starting time for #{comp_key}/#{cat}/#{seg} at #{time_str}")
+        @log.info("set starting time for #{comp_key}/#{cat}/#{seg} at #{time_str} (#{competition.timezone})")
         Time.zone = competition.timezone
 
         category = competition.categories.find_by_name(cat)
@@ -103,13 +117,40 @@ module CompetitionWatcher
         segment.save
       end
     end
+    ################
+    def update_nationals
+      parser = CompetitionWatcher::Parser.new      
+      season = "2015-16"   # yet
+      data = parser.parse_nationals("http://www.jsfresults.com/National/2015-2016/fs_j/index.htm")  # yet
+      tbl_competitions = CSV::table(@competition_csv_filename, encoding: "Shift_JIS:UTF-8")
+      headers = tbl_competitions.headers
+
+      rows = []
+      data.each {|hash|
+        vs = headers.map {|header| v = hash[header.to_sym]; (v)? v.encode("Shift_JIS") : nil}
+        rows << CSV::Row.new(headers, vs)
+      }
+      tbl = CSV::Table.new(rows)
+      puts tbl.to_csv
+    end
+    ################
     def update_skaters
+      parser = CompetitionWatcher::Parser.new
+      data = parser.parse_ws
+      binding.pry
+      data.each {|item|
+        skater = Skater.find_or_create_by(name: item[:name])
+        skater.update(item)
+        skater.save
+      }
     end
   end  ## class
 end
 
 if $0 == __FILE__
   watcher = CompetitionWatcher::Database.new
+
+  wathcer.update_nationals
   watcher.update
   watcher.update_starting_time
   watcher.update_skaters

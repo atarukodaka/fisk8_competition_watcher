@@ -1,0 +1,40 @@
+<% competition = Competition.find_by_key(params[:comp_key]) %>
+<% category = competition.categories.find_by_name(params[:category]) %>
+
+
+<hr>
+<nav class="crumb">
+  <ol class="breadcrumb">
+    <li><a href="/">Home</a>
+    <li><a href="/competitions">Competitions</a>
+    <li><a href="/competition/<%=h competition.key %>"><%=h competition.name %></a>
+    <li><%=h category.name %>
+  </ol>
+</nav>
+<hr>
+<!-- ================================================================ -->
+
+
+<h1>Category Result</h1>
+
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>Ranking<th>Skater<th>Nation<th>Points<th>SP Ranking<th>FS Ranking
+    </tr>
+  </thead>
+  <% category.category_results.sort_by {|res| res.ranking.to_i }.each {|res| %>
+  <tr>
+    <td><%=h res[:ranking] %>
+    <td>
+      <% skater = Skater.find_by(name: res[:skater_name]) %>
+      <%= link_to(res[:skater_name], "/skater/%d" % skater.isu_number) %>
+
+    <% [:skater_nation, :points, :sp_ranking, :fs_ranking].each {|key| %>
+    <td><%=h res[key] %>
+    <% } %> 
+
+  <% } %>
+
+</table>
+

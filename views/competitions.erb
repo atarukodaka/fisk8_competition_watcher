@@ -26,15 +26,15 @@
         <a href="<%=h competition[:site_url]%>">[official result]<span class="glyphicon glyphicon-link"></a>
 	  <% end %>
    <td><%=h competition[:comment] %>
-   <td><% word = time_ago_in_words(competition[:starting_date]) %>
+   <td>
      <%= 
-	case status;
+	case status
 	  when :done
-	    "closed #{h word} ago"
+	    "closed #{h time_ago_in_words(competition[:ending_date])} ago"
 	  when :ongoing
 	    "ongoing"
 	  else
-	   "#{h word} to go"
+	   "#{h time_ago_in_words(competition[:starting_date])} to go"
 	end
 	%>
 <% end %>
