@@ -1,6 +1,5 @@
 <h1>Skaters</h1>
 
-
 <ul>
   <li>World Standings (ISU site)
   <a href="http://www.isuresults.com/ws/ws/wsmen.htm">Men</a> / 
@@ -18,16 +17,16 @@
 
 <h2>Skater Info (in-site)</h2>
 
-<a href="/skaters/men">Men</a> / 
-<a href="/skaters/ladies">Ladies</a> / 
-<a href="/skaters/pairs">Pairs</a> / 
-<a href="/skaters/dance">Ice Dance</a>
+<a href="/skaters/Men">Men</a> / 
+<a href="/skaters/Ladies">Ladies</a> / 
+<a href="/skaters/Pairs">Pairs</a> / 
+<a href="/skaters/Ice Dance">Ice Dance</a>
 
 <table class="table">
   <tr>
     <th>WS Ranking<th>Name<th>Nation<th>points
   </tr>
-<% Skater.where("category = 'Men'", "ws_ranking > 200").each {|skater| %>
+  <% Skater.where("category = ? and ws_ranking <= 200", params[:category]).sort_by{|skater| skater.ws_ranking }.each {|skater| %>
   <tr>
     <td><%=h skater.ws_ranking %>
     <td><%= link_to(h(skater.name), "/skater/#{skater.isu_number}") %>

@@ -76,8 +76,8 @@ module CompetitionWatcher
       erb :skaters
     end
 
-    get '/skaters/men' do
-      erb "hoge"
+    get '/skaters/:category' do
+      erb :skaters
     end
     get '/skater/:isu_number' do
       erb :skater

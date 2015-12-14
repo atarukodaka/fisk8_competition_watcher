@@ -26,6 +26,18 @@
   </tr>
 </table>
 
+
+<h2>Personal Best</h2>
+<table class="table">
+  <tr>
+    <th>Personal Best<td>tbd
+  </tr>
+  <tr>
+  </tr>
+  <tr>
+  </tr>
+</table>
+
 <h2>Competitions</h2>
 
 <table class="table">
@@ -40,8 +52,8 @@
     <td><%=h res.category.competition.starting_date.strftime("%Y/%m/%d") %>
     <td><%=h res.ranking %>
     <td><%=h res.points %>
-    <td><%=h res.sp_ranking %>
-    <td><%=h res.fs_ranking %>
+    <td><%= link_to(h(res.sp_ranking), "/result/#{h res.category.competition.key}/#{h res.category.name}/#{h res.category.segments.first.name}") %>
+    <td><%= link_to(h(res.fs_ranking), "/result/#{h res.category.competition.key}/#{h res.category.name}/#{h res.category.segments.second.name}") if !res.category.segments.second.nil?%>
 
       <% segments = res.category.segments %>
       <% if !segments.first.nil? %>

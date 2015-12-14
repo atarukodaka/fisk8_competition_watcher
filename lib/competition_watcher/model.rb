@@ -28,18 +28,18 @@ class CategoryResult < ActiveRecord::Base
   belongs_to :skater  # reference
 end
 
-
 class SegmentResult < ActiveRecord::Base
   belongs_to :segment
   #references :skater
   belongs_to :skater  # reference
 end
 
-class Skater < ActiveRecord::Base
-end
-
-
 class Entry < ActiveRecord::Base
   belongs_to :skater
   belongs_to :category
 end
+################################################################
+class Skater < ActiveRecord::Base
+  has_one :personal_best
+end
+

@@ -38,6 +38,7 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :name
       t.string :entry_url
       t.string :result_url
+      t.integer :isu_category_number
 
       t.belongs_to :competition
       t.timestamps null: false

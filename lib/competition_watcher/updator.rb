@@ -38,7 +38,6 @@ module CompetitionWatcher
           end
         end
 
-
         site_url = c[:site_url]
         parser = CompetitionWatcher::Parser.new
         summary = parser.parse_summary(site_url, c[:timezone])
@@ -76,7 +75,7 @@ module CompetitionWatcher
             segment.order_url = v[:order_url]
             segment.score_url = v[:score_url]
 
-            @log.info("    parging segment result (#{segment.order_url})")
+            @log.info("    parsing segment result (#{segment.order_url})")
             # try order first
             orders = parser.parse_skating_order(segment.order_url)
             if (! orders.nil?) && (! orders.empty?)
@@ -145,11 +144,15 @@ module CompetitionWatcher
     ################
     def update_skaters
       parser = CompetitionWatcher::Parser.new
+      @log.info("parsing world standings")
       data = parser.parse_ws
-      binding.pry
+      @log.info("parse done")
       data.each {|item|
         skater = Skater.find_or_create_by(name: item[:name])
         skater.update(item)
+        skater.personal_best = PersonalBest.create if skater.personal_best.nil?
+        skater.sp_personal_best = SpPersonalBest.create if skater.sp_personal_best.nil?
+        skater.fs_personal_best = FsPersonalBest.create if skater.fs_personal_best.nil?
         skater.save
       }
     end
