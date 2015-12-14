@@ -51,13 +51,22 @@ module CompetitionWatcher
           category.result_url = value[:result_url]
           category.save
 
+          ## category entry
+          data = parser.parse_category_entry(category.entry_url)
+          data.each {|item|
+            entry = category.entries.find_or_create_by(number: item[:number])
+            entry.number = item[:number]
+            entry.category = category
+            entry.skater = Skater.find_or_create_by(name: item[:skater_name])
+            entry.save
+          }
           ## category result
           data = parser.parse_category_result(category.result_url)
           data.each {|item|
-            category.category_results.find_or_create_by(ranking: item[:ranking]){|res|
-              res.update(item)
-              Skater.find_or_create_by(name: item[:skater_name])
-            }
+            res = category.category_results.find_or_create_by(ranking: item[:ranking])
+            res.update(item)
+            res.skater = Skater.find_or_create_by(name: item[:skater_name])
+            res.save
           }
           ## segment
           value[:segment].each {|seg, v|

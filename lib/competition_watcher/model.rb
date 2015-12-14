@@ -5,6 +5,7 @@ class Competition < ActiveRecord::Base
 end
 
 class Category < ActiveRecord::Base
+  has_many :entries, dependent: :destroy
   has_many :segments, dependent: :destroy
   has_many :category_results, dependent: :destroy
   belongs_to :competition
@@ -19,24 +20,26 @@ end
 
 class SkatingOrder < ActiveRecord::Base
   belongs_to :segment
-  references :skater
+  belongs_to :skater  # reference
 end
 
 class CategoryResult < ActiveRecord::Base
   belongs_to :category
-  references :skater
+  belongs_to :skater  # reference
 end
 
 
 class SegmentResult < ActiveRecord::Base
   belongs_to :segment
-  references :skater
+  #references :skater
+  belongs_to :skater  # reference
 end
 
 class Skater < ActiveRecord::Base
 end
 
-class Entry < ActiveRecord::Base
-#  has_one :skater
-end
 
+class Entry < ActiveRecord::Base
+  belongs_to :skater
+  belongs_to :category
+end

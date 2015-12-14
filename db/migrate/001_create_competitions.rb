@@ -43,6 +43,12 @@ class CreateCompetitions < ActiveRecord::Migration
       t.timestamps null: false
     end
 
+    create_table :entries do |t|
+      t.integer :number
+      t.belongs_to :skater
+      t.belongs_to :category
+    end
+
     create_table :segments do |t|
       t.string :name
       t.datetime :starting_time, default: Time.at(0)

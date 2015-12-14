@@ -151,8 +151,8 @@ module CompetitionWatcher
       end
     end
     ################
-    def parse_category_entries(url)
-      data = {}
+    def parse_category_entry(url)
+      data = []
       page = @agent.get(url)
       if table = search_table_by_first_header(page, "No.")
         table.search("./tr").each {|tr|
@@ -162,7 +162,7 @@ module CompetitionWatcher
           number = tds[0].text
           name = tds[1].text
           nation = tds[2].text
-          data[number] = {number: number, name: name, nation: nation}
+          data << {number: number, skater_name: name}
         }
       end
       return data

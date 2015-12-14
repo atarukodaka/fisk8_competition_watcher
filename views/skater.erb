@@ -30,22 +30,30 @@
 
 <table class="table">
   <tr>
-    <th>Season<th>Competition<th>Category<th>Segment<th>Ranking<th>TSS<th>TES<th>PCS<th>Deductinos
+    <th>Season<th>Class<th>Competition<th>date<th>Ranking<th>Points<th>SP ranking<th>FS ranking<th>SP details<th>FS details
   </tr>
-  <% SegmentResult.where(skater_name: skater.name).each {|seg_res| %>
+  <% CategoryResult.where(skater: skater).sort_by {|res| res.category.competition.starting_date}.reverse.each {|res| %>
   <tr>
-    <% segment = Segment.find_by(id: seg_res.segment_id) %>
-    <% category = Category.find_by(id: segment.category_id) %>
-    <% competition = Competition.find_by(id: category.competition_id) %>
-    <td><%=h competition.season %>
-    <td><%=h competition.name %>
-    <td><%=h category.name %>
-    <td><%=h segment.name %>
-    <td><%=h seg_res.ranking %>
-    <td><%=h seg_res.tss %>
-    <td><%=h seg_res.tes %>
-    <td><%=h seg_res.pcs %>
-    <td><%=h seg_res.deductions %>
+    <td><%=h res.category.competition.season %>
+    <td><%=h res.category.competition.competition_class %>
+    <td><%= link_to(h(res.category.competition.name), "/competition/#{h res.category.competition.key}") %>
+    <td><%=h res.category.competition.starting_date.strftime("%Y/%m/%d") %>
+    <td><%=h res.ranking %>
+    <td><%=h res.points %>
+    <td><%=h res.sp_ranking %>
+    <td><%=h res.fs_ranking %>
+
+      <% segments = res.category.segments %>
+      <% if !segments.first.nil? %>
+    <td> <% seg_res = segments.first.segment_results.where(skater: skater).first %>
+      <%=h seg_res.tss %> = <%=h seg_res.tes %> + <%=h seg_res.pcs %> - <%=h seg_res.deductions %>
+      <% end %>
+
+      <% if !segments.second.nil? %>
+    <td> <% seg_res = segments.second.segment_results.where(skater: skater).first %>
+      <%=h seg_res.tss %> = <%=h seg_res.tes %> + <%=h seg_res.pcs %> - <%=h seg_res.deductions %>
+      <% end %>
   <% } %>
-     
 </table>
+
+
