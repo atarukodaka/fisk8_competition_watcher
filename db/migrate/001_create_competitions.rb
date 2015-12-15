@@ -1,16 +1,5 @@
 class CreateCompetitions < ActiveRecord::Migration
   def change
-    create_table :skaters do |t|
-      t.string :name
-      t.integer :isu_number
-      t.string :nation
-      t.string :category
-      t.integer :ws_ranking
-      t.integer :ws_points
-
-      t.timestamps null: false
-    end
-
     create_table :competitions do |t|
       t.string :key
       t.string :name
@@ -117,5 +106,26 @@ class CreateCompetitions < ActiveRecord::Migration
       t.belongs_to :segment
       t.timestamps null: false
     end
+
+    ################
+    create_table :skaters do |t|
+      t.string :name
+      t.integer :isu_number
+      t.string :nation
+      t.string :category
+      t.integer :ws_ranking
+      t.integer :ws_points
+
+      t.float :pb_total_score, default: 0.00
+      t.integer :pb_total_competition_id
+      t.float :pb_sp_score, default: 0.00
+      t.integer :pb_sp_competition_id
+      t.float :pb_fs_score, default: 0.00
+      t.integer :pb_fs_competition_id
+
+      t.timestamps null: false
+    end
+
+
   end
 end

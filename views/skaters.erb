@@ -1,3 +1,5 @@
+<% category = params[:category] || "Men" %>
+
 <h1>Skaters</h1>
 
 <ul>
@@ -22,11 +24,11 @@
 <a href="/skaters/Pairs">Pairs</a> / 
 <a href="/skaters/Ice Dance">Ice Dance</a>
 
-<table class="table">
+<table class="table table-striped table-hover">
   <tr>
     <th>WS Ranking<th>Name<th>Nation<th>points
   </tr>
-  <% Skater.where("category = ? and ws_ranking <= 200", params[:category]).sort_by{|skater| skater.ws_ranking }.each {|skater| %>
+  <% Skater.where("category = ? and ws_ranking <= 200", category).sort_by{|skater| skater.ws_ranking }.each {|skater| %>
   <tr>
     <td><%=h skater.ws_ranking %>
     <td><%= link_to(h(skater.name), "/skater/#{skater.isu_number}") %>

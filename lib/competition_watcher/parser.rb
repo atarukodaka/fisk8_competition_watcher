@@ -187,7 +187,7 @@ module CompetitionWatcher
             ranking: tds[0].text.to_i,
             skater_name: tds[1].text,
             skater_nation: tds[2].text,
-            points: tds[3].text
+            points: tds[3].text.to_f
           }
           if tds.size == 6
             hash[:sp_ranking] = tds[4].text.to_i

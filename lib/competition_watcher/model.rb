@@ -40,6 +40,8 @@ class Entry < ActiveRecord::Base
 end
 ################################################################
 class Skater < ActiveRecord::Base
-  has_one :personal_best
+  belongs_to :pb_total_competition, class_name: Competition
+  belongs_to :pb_sp_competition, class_name: Competition
+  belongs_to :pb_fs_competition, class_name: Competition
 end
 

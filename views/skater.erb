@@ -30,7 +30,11 @@
 <h2>Personal Best</h2>
 <table class="table">
   <tr>
-    <th>Personal Best<td>tbd
+    <th>Personal Best</th>
+    <td><%=h "%.2f" % [skater.pb_total_score] %>
+      <% binding.pry %>
+      <% comp = skater.pb_total_competition %>
+    <td><%= link_to(h(comp.name), "/competition/#{h comp.key}") %>
   </tr>
   <tr>
   </tr>

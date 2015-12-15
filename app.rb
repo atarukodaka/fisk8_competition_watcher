@@ -36,17 +36,15 @@ module CompetitionWatcher
     end
 
     get '/competitions' do
-      competitions = Competition.all.order("starting_date desc")
-
-      erb competitions.map {|c|
-        %Q[<li>#{h c[:key]} / <a href="/competition?key=#{h c[:key]}">#{h c[:name]}</a>]
-      }.join("")
+      page = (params[:p] || params[:page] || 1).to_i
+      per_page = 5
+      max_page = ((Competition.count-1)/3).to_i + 1
       
-      erb :competitions, locals: {competitions: competitions}
-    end
+      starting = [(page-1)*per_page, Competition.count].min
+      ending = starting+per_page-1
+      competitions = Competition.order("starting_date desc")[starting..ending]
 
-    get '/competitions/json' do
-      Competition.all.to_json
+      erb :competitions, locals: {competitions: competitions, page: page, max_page: max_page}
     end
 
     get '/competition/:comp_key' do

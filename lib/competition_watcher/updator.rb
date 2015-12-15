@@ -66,6 +66,12 @@ module CompetitionWatcher
             res.update(item)
             res.skater = Skater.find_or_create_by(name: item[:skater_name])
             res.save
+            # personal best
+            if item[:points] > res.skater.pb_total_score
+              res.skater.pb_total_score = item[:points]
+              res.skater.pb_total_competition = competition
+              res.skater.save
+            end
           }
           ## segment
           value[:segment].each {|seg, v|

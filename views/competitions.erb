@@ -39,3 +39,17 @@
 	%>
 <% end %>
 </table>
+
+<nav>
+  <ul class="pagination">
+   <li>
+      <a href="/competitions/p=<%=h page-1 %>" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>    
+   <li>
+      <a href="/competitions/p=<%=h page+1%>" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
