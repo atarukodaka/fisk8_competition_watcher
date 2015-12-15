@@ -1,18 +1,14 @@
 require 'logger'
 require 'active_record'
 
+require 'competition_watcher/database'
+
 module CompetitionWatcher
   class Updator
-    def self.connect_database
-      local_db_address = "postgresql://postgres@192.168.33.10/competition_db"
-      db_address = ENV['DATABASE_URL'] || local_db_address
-      ActiveRecord::Base.establish_connection(db_address)
-    end
-
     def initialize
       @log = Logger.new(STDERR)
       @competition_csv_filename = "competitions.csv"
-      self.class.connect_database
+      @parser = CompetitionWatcher::Parser.new
     end
     def update
       # read input table
@@ -39,8 +35,7 @@ module CompetitionWatcher
         end
 
         site_url = c[:site_url]
-        parser = CompetitionWatcher::Parser.new
-        summary = parser.parse_summary(site_url, c[:timezone])
+        summary = @parser.parse_summary(site_url, c[:timezone])
         
         ## 
         summary.each {|cat, value|
@@ -51,7 +46,7 @@ module CompetitionWatcher
           category.save
 
           ## category entry
-          data = parser.parse_category_entry(category.entry_url)
+          data = @parser.parse_category_entry(category.entry_url)
           data.each {|item|
             entry = category.entries.find_or_create_by(number: item[:number])
             entry.number = item[:number]
@@ -60,7 +55,7 @@ module CompetitionWatcher
             entry.save
           }
           ## category result
-          data = parser.parse_category_result(category.result_url)
+          data = @parser.parse_category_result(category.result_url)
           data.each {|item|
             res = category.category_results.find_or_create_by(ranking: item[:ranking])
             res.update(item)
@@ -83,7 +78,7 @@ module CompetitionWatcher
 
             @log.info("    parsing segment result (#{segment.order_url})")
             # try order first
-            orders = parser.parse_skating_order(segment.order_url)
+            orders = @parser.parse_skating_order(segment.order_url)
             if (! orders.nil?) && (! orders.empty?)
               orders.each {|item|
                 order = segment.skating_orders.find_or_create_by(starting_number: item[:starting_number])
@@ -93,7 +88,7 @@ module CompetitionWatcher
               }
             else
               # try result then
-              seg_data = parser.parse_segment_result(segment.order_url)
+              seg_data = @parser.parse_segment_result(segment.order_url)
               seg_data.each {|item|
                 seg_res = segment.segment_results.find_or_create_by(ranking: item[:ranking])
                 seg_res.skater = Skater.find_or_create_by(name: item[:skater_name])
@@ -140,9 +135,9 @@ module CompetitionWatcher
     end
     ################
     def update_nationals
-      parser = CompetitionWatcher::Parser.new      
+      @parser = CompetitionWatcher::Parser.new      
       season = "2015-16"   # yet
-      data = parser.parse_nationals("http://www.jsfresults.com/National/2015-2016/fs_j/index.htm")  # yet
+      data = @parser.parse_nationals("http://www.jsfresults.com/National/2015-2016/fs_j/index.htm")  # yet
       tbl_competitions = CSV::table(@competition_csv_filename, encoding: "Shift_JIS:UTF-8")
       headers = tbl_competitions.headers
 
@@ -156,9 +151,9 @@ module CompetitionWatcher
     end
     ################
     def update_skaters
-      parser = CompetitionWatcher::Parser.new
+      @parser = CompetitionWatcher::Parser.new
       @log.info("parsing world standings")
-      data = parser.parse_ws
+      data = @parser.parse_ws
       @log.info("parse done")
       data.each {|item|
         skater = Skater.find_or_create_by(name: item[:name])

@@ -44,7 +44,7 @@ module CompetitionWatcher
       ending = starting+per_page-1
       competitions = Competition.order("starting_date desc")[starting..ending]
 
-      erb :competitions, locals: {competitions: competitions, page: page, max_page: max_page}
+      erb :competitions, locals: {competitions: competitions, page: page, max_page: max_page, per_page: per_page}
     end
 
     get '/competition/:comp_key' do
@@ -56,13 +56,15 @@ module CompetitionWatcher
       end
     end
 
-    get '/skating_order/:comp_key/:category/:segment' do
+    get '/competition/:comp_key/:category/:segment/skating_order' do
+    #get '/skating_order/:comp_key/:category/:segment' do
       erb :skating_order
     end
-    get '/result/:comp_key/:category' do
+    get '/competition/:comp_key/:category/result' do
+    #get '/result/:comp_key/:category' do
       erb :category_result
     end
-    get '/result/:comp_key/:category/:segment' do
+    get '/competition/:comp_key/:category/:segment/result' do
       erb :segment_result
     end
 

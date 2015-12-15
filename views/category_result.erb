@@ -31,7 +31,7 @@
     <td><%=h res[:ranking] %>
     <td>
       <% skater = Skater.find_by(name: res[:skater_name]) %>
-      <%= link_to(res[:skater_name], "/skater/%d" % skater.isu_number) %>
+      <%= link_to(res[:skater_name], "/skater/%d" % skater.isu_number.to_i) %>
 
     <% [:skater_nation, :points, :sp_ranking, :fs_ranking].each {|key| %>
     <td><%=h res[key] %>

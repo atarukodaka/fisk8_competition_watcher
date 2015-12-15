@@ -2,11 +2,7 @@ $LOAD_PATH.push('./lib')
 
 require 'pry-byebug'
 require 'competition_watcher'
-
-CompetitionWatcher::Updator.connect_database
-
-#table = "segment_results";
-#ActiveRecord::Base.connection.execute("DROP TABLE #{table}")
+require 'competition_watcher/database'
 
 binding.pry
 

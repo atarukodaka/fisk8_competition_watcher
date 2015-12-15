@@ -1,6 +1,8 @@
 
 <h1>Competition List</h1>
 
+<div><%=h Competition.count %> competitions registered.</div>
+
 <table class="table table-hover">
   <tr>
     <th>Class<th>Type<th>Season<th>Date<th>Timezone<th>Name<th>City, Country<th>References<th>Comment<th>status
@@ -40,9 +42,10 @@
 <% end %>
 </table>
 
-count: <%= Competition.count %> / 
-page: <%= page %> / 
-max: <%= max_page %>
+count: <%=h Competition.count %> / 
+page: <%=h page %> / 
+per_page: <%=h per_page %> /
+max page: <%=h max_page %>
 <nav>
   <ul class="pagination">
      <% if page-1<=0 %>

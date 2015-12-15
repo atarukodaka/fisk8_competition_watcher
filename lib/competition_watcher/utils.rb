@@ -16,5 +16,10 @@ module CompetitionWatcher
       end
       return tz || "UTC"
     end
+
+    def get_season(tm)
+      ## yet
+    end
+    ################
   end
 end

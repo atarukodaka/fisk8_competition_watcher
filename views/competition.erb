@@ -39,11 +39,11 @@
 <tr>
   <td><a href="<%=h category[:entry_url] %>"><%=h category.name %><a>
    <% segment = category.segments %>
-  <td><a href="/result/<%=h competition[:key]%>/<%=h category.name %>/<%=h segment.first.name %>"><%=h segment.first.name %></a> (<a href="<%=h segment.first.score_url %>">judge score</a>)
+  <td><a href="/competition/<%=h competition[:key]%>/<%=h category.name %>/<%=h segment.first.name %>/result"><%=h segment.first.name %></a> (<a href="<%=h segment.first.score_url %>">judge score</a>)
   <td><% if segment.second %>
-         <a href="/result/<%=h competition[:key]%>/<%=h category.name %>/<%=h segment.second.name %>"><%=h segment.second.name %></a> (<a href="<%=h segment.second.score_url %>">judge score</a>)
+         <a href="/competition/<%=h competition[:key]%>/<%=h category.name %>/<%=h segment.second.name %>/result"><%=h segment.second.name %></a> (<a href="<%=h segment.second.score_url %>">judge score</a>)
       <% end %>
-  <td><%= link_to("Result", "/result/#{h competition[:key]}/#{h category.name}")  %>
+  <td><%= link_to("Result", "/competition/#{h competition[:key]}/#{h category.name}/result")  %>
   <td>
     [<a href="<%=h category.entry_url %>" target="_blank">entry<span class="glyphicon glyphicon-link"></a>]
     [<a href="<%=h category.result_url %>" target="_blank">result<span class="glyphicon glyphicon-link"></a>]
