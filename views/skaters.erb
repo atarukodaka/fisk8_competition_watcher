@@ -26,7 +26,7 @@
 
 <table class="table table-striped table-hover">
   <tr>
-    <th>WS Ranking<th>Name<th>Nation<th>points
+    <th>WS Ranking<th>Name<th>Nation<th>WS Points<th>PB<th>Latest Competition
   </tr>
   <% Skater.where("category = ? and ws_ranking <= 200", category).sort_by{|skater| skater.ws_ranking }.each {|skater| %>
   <tr>
@@ -34,6 +34,21 @@
     <td><%= link_to(h(skater.name), "/skater/#{skater.isu_number}") %>
     <td><%=h skater.nation %>
     <td><%=h skater.ws_points %>
+    <td>
+      <% if skater.pb_total_score > 0 %>
+        <%=h "%.2f" % [skater.pb_total_score] %> 
+	<% comp = skater.pb_total_category_result.category.competition %>
+        (<a href="/competition/<%=h comp.key %>"><%=h comp.name%>)</a>
+      <% end %>
+    <td><% latest_category = skater.categories.sort_by {|category| category.competition.starting_date }.last %>
+      <% if latest_category %>
+        <% latest_comp = latest_category.competition %>
+	<% res = latest_category.category_results.where(skater: skater).first%>
+        <a href="/competition/<%=h latest_comp.key %>">
+        <%=h latest_comp.name %> 
+	</a>
+	(<%=h res.ranking %>: <%=h "%.2f" % [res.points] %>)
+      <% end %>
 <% } %>
 </table>
 

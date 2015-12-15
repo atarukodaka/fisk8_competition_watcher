@@ -1,9 +1,6 @@
 
 
 <% isu_number = params[:isu_number].to_i %>
-
-
-
 <% skater = Skater.find_by(isu_number: isu_number) %>
 
 
@@ -19,7 +16,7 @@
     <th>Nation<td><%=h skater.nation %>
   </tr>
   <tr>
-    <th>ISU Number<td><%= link_to(skater.isu_number, "http://www.isuresults.com/bios/isufs%08d.htm" % [skater.isu_number]) %>
+    <th>ISU Bio Number<td><%= link_to(skater.isu_number, "http://www.isuresults.com/bios/isufs%08d.htm" % [skater.isu_number]) %>
   </tr>
   <tr>
     <th>Category<td><%=h skater.category %>
@@ -32,15 +29,36 @@
   <tr>
     <th>Personal Best</th>
     <td><%=h "%.2f" % [skater.pb_total_score] %>
-      <% binding.pry %>
-      <% comp = skater.pb_total_competition %>
-    <td><%= link_to(h(comp.name), "/competition/#{h comp.key}") %>
+      <% comp = skater.pb_total_category_result.category.competition %>
+    <td>
+      <% if !comp.nil? %>
+        <%= link_to(h(comp.name), "/competition/#{h comp.key}") %>
+	(<%= h skater.pb_total_category_result.ranking %>)
+      <% end %>
   </tr>
   <tr>
+    <th>Personal Best - Short Program</th>
+    <td><%=h "%.2f" % [skater.pb_sp_score] %>
+      <% comp = skater.pb_sp_segment_result.segment.category.competition %>
+    <td><% if !comp.nil? %> 
+      <%= link_to(h(comp.name), "/competition/#{h comp.key}") %>
+	(<%= h skater.pb_sp_segment_result.ranking %>)
+      <% end %>
   </tr>
   <tr>
+    <th>Personal Best - Free Skating</th>
+    <td><%=h "%.2f" % [skater.pb_fs_score] %>
+      <% comp = skater.pb_fs_segment_result.segment.category.competition %>
+    <td><% if !comp.nil? %> 
+      <%= link_to(h(comp.name), "/competition/#{h comp.key}") %>
+	(<%= h skater.pb_fs_segment_result.ranking %>)
+      <% end %>
   </tr>
+
 </table>
+<div>
+  (*) note that this PBs are calculated based on on-site results which could be different from officials. pls refer ISU site for correct information. 
+</div>
 
 <h2>Competitions</h2>
 

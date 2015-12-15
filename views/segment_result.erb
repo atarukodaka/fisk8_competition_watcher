@@ -30,7 +30,7 @@
   <tr>
     <td><%=h seg_res.ranking %>
     <td>
-      <%= link_to(seg_res.skater.name, "/skater/%d" % seg_res.skater.isu_number) %>
+      <%= link_to(seg_res.skater.name, "/skater/%d" % seg_res.skater.isu_number.to_i) %>
 
     <% [:skater_nation, :tss, :tes, :pcs, :components_ss, :components_tr, :components_pe, :components_ch, :components_in, :deductions, :starting_number].each {|key| %>
     <td><%=h seg_res[key] %>

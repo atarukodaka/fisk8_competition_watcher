@@ -2,12 +2,17 @@
 ## model
 class Competition < ActiveRecord::Base
   has_many :categories, dependent: :destroy
+
+  #has_many :skaters, through: :categories
 end
 
 class Category < ActiveRecord::Base
   has_many :entries, dependent: :destroy
   has_many :segments, dependent: :destroy
   has_many :category_results, dependent: :destroy
+
+  #has_many :skaters, through: :entries
+
   belongs_to :competition
 end
 
@@ -40,8 +45,12 @@ class Entry < ActiveRecord::Base
 end
 ################################################################
 class Skater < ActiveRecord::Base
-  belongs_to :pb_total_competition, class_name: Competition
-  belongs_to :pb_sp_competition, class_name: Competition
-  belongs_to :pb_fs_competition, class_name: Competition
+  has_many :entries
+  has_many :categories, through: :entries
+  has_many :competitions, through: :categories
+
+  belongs_to :pb_total_category_result, class_name: CategoryResult
+  belongs_to :pb_sp_segment_result, class_name: SegmentResult
+  belongs_to :pb_fs_segment_result, class_name: SegmentResult
 end
 

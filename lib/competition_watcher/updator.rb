@@ -67,9 +67,9 @@ module CompetitionWatcher
             res.skater = Skater.find_or_create_by(name: item[:skater_name])
             res.save
             # personal best
-            if item[:points] > res.skater.pb_total_score
+            if competition.competition_class == "ISU" and item[:points] > res.skater.pb_total_score
               res.skater.pb_total_score = item[:points]
-              res.skater.pb_total_competition = competition
+              res.skater.pb_total_category_result = res
               res.skater.save
             end
           }
@@ -85,25 +85,32 @@ module CompetitionWatcher
             # try order first
             orders = parser.parse_skating_order(segment.order_url)
             if (! orders.nil?) && (! orders.empty?)
-              orders.each {|data|
-                order = segment.skating_orders.find_or_create_by(starting_number: data[:starting_number])
-                ## yet: update skater info
-                order.update(data)
+              orders.each {|item|
+                order = segment.skating_orders.find_or_create_by(starting_number: item[:starting_number])
+                order.skater = Skater.find_or_create_by(name: item[:skater_name])
+                order.update(item)
                 order.save
               }
             else
               # try result then
               seg_data = parser.parse_segment_result(segment.order_url)
-              seg_data.each {|k, vv|
-                seg_res = segment.segment_results.find_or_create_by(ranking: k)
-                seg_res.update(vv)
-                skater = Skater.find_or_create_by(name: vv[:skater_name])
-                skater.nation = vv[:skater_nation]
-                skater.isu_number = vv[:skater_isu_number]
-                skater.category = category.name
-                skater.save
-                seg_res.skater_id = skater.id
+              seg_data.each {|item|
+                seg_res = segment.segment_results.find_or_create_by(ranking: item[:ranking])
+                seg_res.skater = Skater.find_or_create_by(name: item[:skater_name])
+                seg_res.update(item)
                 seg_res.save
+                
+                # pb for sp/fs
+                if competition.competition_class == "ISU" and 
+                  if seg =~ /^Short/
+                    seg_res.skater.pb_sp_score = seg_res.tss
+                    seg_res.skater.pb_sp_segment_result = seg_res
+                  else
+                    seg_res.skater.pb_fs_score = seg_res.tss
+                    seg_res.skater.pb_fs_segment_result = seg_res
+                  end
+                  seg_res.skater.save
+                end
               }
             end
             ## result
@@ -156,9 +163,6 @@ module CompetitionWatcher
       data.each {|item|
         skater = Skater.find_or_create_by(name: item[:name])
         skater.update(item)
-        skater.personal_best = PersonalBest.create if skater.personal_best.nil?
-        skater.sp_personal_best = SpPersonalBest.create if skater.sp_personal_best.nil?
-        skater.fs_personal_best = FsPersonalBest.create if skater.fs_personal_best.nil?
         skater.save
       }
     end

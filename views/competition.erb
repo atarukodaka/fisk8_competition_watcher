@@ -33,20 +33,20 @@
 <table class="table table-striped table-hover">
 <thead>
 <tr>
-  <th>Category<th>Entry<th>Segment1<th>Segment2<th>Result<th>Official Site
+  <th>Category<th>Short Program / Dance<th>Free Skating / Dance<th>Result<th>Official Site
 </thead>
 <% competition.categories.each {|category| %>
 <tr>
-  <td><%=h category.name %>
-  <td><a href="<%=h category[:entry_url] %>">entry<a>
+  <td><a href="<%=h category[:entry_url] %>"><%=h category.name %><a>
    <% segment = category.segments %>
   <td><a href="/result/<%=h competition[:key]%>/<%=h category.name %>/<%=h segment.first.name %>"><%=h segment.first.name %></a> (<a href="<%=h segment.first.score_url %>">judge score</a>)
   <td><% if segment.second %>
          <a href="/result/<%=h competition[:key]%>/<%=h category.name %>/<%=h segment.second.name %>"><%=h segment.second.name %></a> (<a href="<%=h segment.second.score_url %>">judge score</a>)
       <% end %>
-  <td><%= link_to("result", "/result/#{h competition[:key]}/#{h category.name}")  %>
+  <td><%= link_to("Result", "/result/#{h competition[:key]}/#{h category.name}")  %>
   <td>
-    <a href="<%=h category.result_url %>" target="_blank">result</a>
+    [<a href="<%=h category.entry_url %>" target="_blank">entry<span class="glyphicon glyphicon-link"></a>]
+    [<a href="<%=h category.result_url %>" target="_blank">result<span class="glyphicon glyphicon-link"></a>]
 <% } %>
 </table>
 

@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 require 'mechanize'
-require 'json'
 require 'uri'
-require 'pry-byebug'
-#require './competition_watcher'
 require 'logger'
+
+require 'pry-byebug'
 
 module CompetitionWatcher
   class Parser
@@ -91,7 +90,7 @@ module CompetitionWatcher
 
     ################
     def parse_segment_result(result_url)
-      data = {}
+      data = []
       page = @agent.get(result_url)
       table = search_table_by_first_header(page, "   Pl.  ")
       return data if table.nil?
@@ -108,7 +107,7 @@ module CompetitionWatcher
           end
         end
         ranking = tds[0].text
-        data[ranking] = {
+        data << {
           ranking: ranking,
           skater_name: tds[1].text,
           skater_nation: tds[2].text,

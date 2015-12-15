@@ -117,11 +117,11 @@ class CreateCompetitions < ActiveRecord::Migration
       t.integer :ws_points
 
       t.float :pb_total_score, default: 0.00
-      t.integer :pb_total_competition_id
+      t.integer :pb_total_category_result_id
       t.float :pb_sp_score, default: 0.00
-      t.integer :pb_sp_competition_id
+      t.integer :pb_sp_segment_result_id
       t.float :pb_fs_score, default: 0.00
-      t.integer :pb_fs_competition_id
+      t.integer :pb_fs_segment_result_id
 
       t.timestamps null: false
     end
