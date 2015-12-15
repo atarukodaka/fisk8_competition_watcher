@@ -37,7 +37,7 @@ module CompetitionWatcher
 
     get '/competitions' do
       page = (params[:p] || params[:page] || 1).to_i
-      per_page = 10
+      per_page = 20
       max_page = ((Competition.count-1)/per_page).to_i+1
       
       starting = [(page-1)*per_page, Competition.count].min

@@ -1,5 +1,6 @@
 class CreateCompetitions < ActiveRecord::Migration
   def change
+
     create_table :competitions do |t|
       t.string :key
       t.string :name
@@ -39,20 +40,7 @@ class CreateCompetitions < ActiveRecord::Migration
       t.belongs_to :category
     end
 
-    create_table :segments do |t|
-      t.string :name
-      t.datetime :starting_time, default: Time.at(0)
-      t.string :order_url
-      t.string :score_url
-
-      t.integer :ranking
-      t.string :tss
-      t.string :tes
-      t.string :pcs
-      
-      t.belongs_to :category
-      t.timestamps null: false
-    end
+    ################
 
     create_table :skating_orders do |t|
       t.string :starting_number
@@ -126,6 +114,6 @@ class CreateCompetitions < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-
+    
   end
 end
