@@ -45,7 +45,7 @@ class CreateCompetitions < ActiveRecord::Migration
       t.string :order_url
       t.string :score_url
 
-      t.string :ranking
+      t.integer :ranking
       t.string :tss
       t.string :tes
       t.string :pcs
@@ -67,7 +67,7 @@ class CreateCompetitions < ActiveRecord::Migration
     end
 
     create_table :category_results do |t|
-      t.string :ranking
+      t.integer :ranking
 
       t.string :skater_name
       t.string :skater_nation

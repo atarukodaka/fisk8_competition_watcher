@@ -29,7 +29,7 @@
   <tr>
     <th>Personal Best</th>
     <td><%=h "%.2f" % [skater.pb_total_score] %>
-      <% comp = skater.pb_total_category_result.category.competition %>
+      <% comp = skater.pb_total_category_result.try {|obj| obj.category.competition} %>
     <td>
       <% if !comp.nil? %>
         <%= link_to(h(comp.name), "/competition/#{h comp.key}") %>
@@ -39,7 +39,7 @@
   <tr>
     <th>Personal Best - Short Program</th>
     <td><%=h "%.2f" % [skater.pb_sp_score] %>
-      <% comp = skater.pb_sp_segment_result.segment.category.competition %>
+      <% comp = skater.pb_sp_segment_result.try {|res| res.segment.category.competition } %>
     <td><% if !comp.nil? %> 
       <%= link_to(h(comp.name), "/competition/#{h comp.key}") %>
 	(<%= h skater.pb_sp_segment_result.ranking %>)
@@ -48,7 +48,7 @@
   <tr>
     <th>Personal Best - Free Skating</th>
     <td><%=h "%.2f" % [skater.pb_fs_score] %>
-      <% comp = skater.pb_fs_segment_result.segment.category.competition %>
+      <% comp = skater.pb_fs_segment_result.try {|res| res.segment.category.competition } %>
     <td><% if !comp.nil? %> 
       <%= link_to(h(comp.name), "/competition/#{h comp.key}") %>
 	(<%= h skater.pb_fs_segment_result.ranking %>)

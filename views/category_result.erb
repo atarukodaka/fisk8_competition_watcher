@@ -23,8 +23,11 @@
       <th>Ranking<th>Skater<th>Nation<th>Points<th>SP Ranking<th>FS Ranking
     </tr>
   </thead>
+
+  <% wd = [] %>
   <% category.category_results.sort_by {|res| res.ranking.to_i }.each {|res| %>
   <tr>
+    <% if res[:ranking].to_i == 0; wd << res; next; end %>
     <td><%=h res[:ranking] %>
     <td>
       <% skater = Skater.find_by(name: res[:skater_name]) %>
@@ -33,8 +36,9 @@
     <% [:skater_nation, :points, :sp_ranking, :fs_ranking].each {|key| %>
     <td><%=h res[key] %>
     <% } %> 
-
   <% } %>
-
+  <% wd.each {|res| %>
+      <tr><td>WD<td><%=h res.skater.name %><td><%=h res.skater.nation %><td>-<td>-<td>-
+  <% } %>
 </table>
 

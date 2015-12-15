@@ -43,11 +43,13 @@
     <td><% latest_category = skater.categories.sort_by {|category| category.competition.starting_date }.last %>
       <% if latest_category %>
         <% latest_comp = latest_category.competition %>
-	<% res = latest_category.category_results.where(skater: skater).first%>
         <a href="/competition/<%=h latest_comp.key %>">
         <%=h latest_comp.name %> 
 	</a>
+	<% res = latest_category.category_results.where(skater: skater).first%>
+	<% if res %>
 	(<%=h res.ranking %>: <%=h "%.2f" % [res.points] %>)
+	<% end %>
       <% end %>
 <% } %>
 </table>

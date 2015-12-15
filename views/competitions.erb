@@ -40,16 +40,41 @@
 <% end %>
 </table>
 
+count: <%= Competition.count %> / 
+page: <%= page %> / 
+max: <%= max_page %>
 <nav>
   <ul class="pagination">
-   <li>
-      <a href="/competitions/p=<%=h page-1 %>" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
+     <% if page-1<=0 %>
+	<li class="disabled">
+	  <span aria-hidden="true" class="disabled">&laquo;</span>
+	</li>
+     <% else %>
+	<li>
+	  <a href="/competitions?p=<%=h page-1 %>" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+	</li>
       </a>    
-   <li>
-      <a href="/competitions/p=<%=h page+1%>" aria-label="Next">
+     <% end %>
+
+     <% (1..max_page).each {|i| %>
+
+	  <% if i == page %>
+	  <li class="disabled"><a><%=h i %></a></li>
+	  <% else %>
+	  <li><a href="/competitions?p=<%=h i %>"><%=h i %></a></li>
+	  <% end %>
+	</li>
+     <% } %>
+
+     <% if page >= max_page %>
+     <li class="disabled"><span aria-hidden="true">&raquo;</span></li>
+     <% else %>
+     <li><a href="/competitions?p=<%=h page+1%>" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
       </a>
+       </li>
+     <% end %>
     </li>
   </ul>
 </nav>
