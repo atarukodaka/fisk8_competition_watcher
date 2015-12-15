@@ -9,7 +9,7 @@ update_nationals:
 	$(BE) ruby update.rb nationals
 
 app:
-	$(BE) rackup -o 192.168.33.10 -p 9295
+	$(BE) rackup -o 192.168.33.10 -p 9294
 
 clean:
 	rm -rf *~

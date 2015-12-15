@@ -40,6 +40,22 @@ class CreateCompetitions < ActiveRecord::Migration
       t.belongs_to :category
     end
 
+    create_table :segments do |t|
+      t.string :name
+      t.datetime :starting_time, default: Time.at(0)
+      t.string :order_url
+      t.string :score_url
+
+      t.string :ranking
+      t.string :tss
+      t.string :tes
+      t.string :pcs
+      
+      t.belongs_to :category
+      t.timestamps null: false
+    end
+
+
     ################
 
     create_table :skating_orders do |t|
