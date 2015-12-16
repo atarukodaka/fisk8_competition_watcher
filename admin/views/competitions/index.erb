@@ -1,0 +1,109 @@
+<ul class="nav nav-tabs">
+  <li class=active> <%= link_to tag_icon(:list, pat(:list)), url(:competitions, :index) %></li>
+  <li> <%= link_to tag_icon(:plus, pat(:new)), url(:competitions, :new) %></li>
+</ul>
+<div class=tabs-content>
+  <table id=list class="table table-striped table-hover table-condensed">
+    <thead>
+      <tr>
+        <th class="header list-menu">
+          <div class=dropdown>
+            <a href="#" class="list-menu-toggle dropdown-toggle" data-toggle='dropdown'>
+              <%= tag_icon :magic %> <span class=caret></span>
+            </a>
+            <ul class="list-menu dropdown-menu" role=menu>
+              <li class=list-menu-wrapper>
+                <%= link_to tag_icon('check-square-o', pat(:select_all)), '#', :id => 'select-all', :class => 'list-menu-link' %>
+              </li>
+              <li class=list-menu-wrapper.list-menu-wrapper-disabled>
+                <%= link_to tag_icon('square-o', pat(:deselect_all)), '#', :id => 'deselect-all', :class => 'list-menu-link list-menu-link-disabled' %>
+              </li>
+              <li class="list-menu-divider divider"></li>
+              <li class=list-menu-wrapper.list-menu-wrapper-disabled>
+                <%=link_to tag_icon('trash-o', pat(:delete_selected)), '#', :id => 'delete-selected', :class => 'list-menu-link list-menu-link-disabled' %>
+                <div class='list-menu-popover-delete-selected popover right'>
+                  <div class=arrow></div>
+                  <h3 class=popover-title><%= pat(:delete_selected_title) %></h3>
+                  <div class=popover-content>
+                    <% form_tag url(:competitions, :destroy_many), :method => :delete do %>
+                      <%=hidden_field_tag :competition_ids, :'data-delete-many-ids' => true %>
+                      <%=submit_tag pat(:delete), :class =>'list-menu-popover-delete-selected-btn btn btn-danger btn-small' %>
+                      <div class='btn btn-default btn-small cancel'><%= pat(:cancel) %></div>
+                    <% end %>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </th>
+                <th class=header> <%= mat(:competition, :id) %></th>
+                <th class=header> <%= mat(:competition, :key) %></th>
+                <th class=header> <%= mat(:competition, :name) %></th>
+                <th class=header> <%= mat(:competition, :shortname) %></th>
+                <th class=header> <%= mat(:competition, :season) %></th>
+                <th class=header> <%= mat(:competition, :competition_class) %></th>
+                <th class=header> <%= mat(:competition, :competition_type) %></th>
+                <th class=header> <%= mat(:competition, :hosted_by) %></th>
+                <th class=header> <%= mat(:competition, :country) %></th>
+                <th class=header> <%= mat(:competition, :city) %></th>
+                <th class=header> <%= mat(:competition, :starting_date) %></th>
+                <th class=header> <%= mat(:competition, :ending_date) %></th>
+                <th class=header> <%= mat(:competition, :timezone) %></th>
+                <th class=header> <%= mat(:competition, :site_url) %></th>
+                <th class=header> <%= mat(:competition, :comment) %></th>
+                <th class=header> <%= mat(:competition, :parser) %></th>
+                <th class=header> <%= mat(:competition, :updating) %></th>
+                <th class=header> <%= mat(:competition, :status) %></th>
+                <th class=header> <%= mat(:competition, :created_at) %></th>
+                <th class=header> <%= mat(:competition, :updated_at) %></th>
+                <th class="header list-row-action-header"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @competitions.each do |competition| %>
+        <tr class=list-row>
+          <td class="list-column list-selectable">
+            <%= check_box_tag 'competition_ids[]', :value => competition.id, :class => 'list-selectable-checkbox' %>
+           </td>
+          <td class=list-column> <%= competition.id %> </td>
+          <td class=list-column> <%= competition.key %> </td>
+          <td class=list-column> <%= competition.name %> </td>
+          <td class=list-column> <%= competition.shortname %> </td>
+          <td class=list-column> <%= competition.season %> </td>
+          <td class=list-column> <%= competition.competition_class %> </td>
+          <td class=list-column> <%= competition.competition_type %> </td>
+          <td class=list-column> <%= competition.hosted_by %> </td>
+          <td class=list-column> <%= competition.country %> </td>
+          <td class=list-column> <%= competition.city %> </td>
+          <td class=list-column> <%= competition.starting_date %> </td>
+          <td class=list-column> <%= competition.ending_date %> </td>
+          <td class=list-column> <%= competition.timezone %> </td>
+          <td class=list-column> <%= competition.site_url %> </td>
+          <td class=list-column> <%= competition.comment %> </td>
+          <td class=list-column> <%= competition.parser %> </td>
+          <td class=list-column> <%= competition.updating %> </td>
+          <td class=list-column> <%= competition.status %> </td>
+          <td class=list-column> <%= time_ago_in_words competition.created_at %></td>
+          <td class=list-column> <%= time_ago_in_words competition.updated_at %></td>
+          <td class="list-column list-row-action">
+            <div class='list-row-action-wrapper'>
+               <%= link_to tag_icon(:edit), :href => url(:competitions, :edit, :id => competition.id), :rel => :tooltip, :title => "#{pat(:edit)} competition", :class => 'list-row-action-wrapper-link' %>
+               <%= link_to tag_icon('trash-o'), :rel => :tooltip, :title => "#{pat(:delete)} competition", :class => 'list-row-action-delete-one list-row-action-wrapper-link' %>
+               <div class="popover list-row-action-popover-delete-one left">
+                 <div class=arrow> </div>
+                 <h3 class=popover-title><%= pat(:delete, :model => "competition") %></h3>
+                 <div class=popover-content>
+                   <% form_tag url(:competitions, :destroy, :id => competition.id), :method => :delete do %>
+                     <%= submit_tag pat(:delete), :class =>'list-row-action-popover-delete-one-btn btn btn-danger btn-small' %>
+                     <div class="btn btn-default btn-small cancel"><%= pat(:cancel) %></div>
+                   <% end %>
+                 </div>
+               </div>
+             </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

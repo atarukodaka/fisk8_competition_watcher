@@ -1,0 +1,145 @@
+<% error = @competition.errors.include?(:key) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :key, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :key, :class => 'form-control input-xlarge input-with-feedback', :autofocus => true %>
+    <span class='help-inline'><%= error ? f.error_message_on(:key) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:name) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :name, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :name, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:name) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:shortname) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :shortname, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :shortname, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:shortname) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:season) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :season, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :season, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:season) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:competition_class) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :competition_class, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :competition_class, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:competition_class) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:competition_type) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :competition_type, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :competition_type, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:competition_type) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:hosted_by) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :hosted_by, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :hosted_by, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:hosted_by) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:country) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :country, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :country, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:country) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:city) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :city, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :city, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:city) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:starting_date) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :starting_date, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :starting_date, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:starting_date) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:ending_date) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :ending_date, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :ending_date, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:ending_date) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:timezone) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :timezone, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :timezone, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:timezone) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:site_url) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :site_url, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :site_url, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:site_url) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:comment) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :comment, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :comment, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:comment) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:parser) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :parser, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :parser, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:parser) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:updating) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :updating, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :updating, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:updating) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+<% error = @competition.errors.include?(:status) %>
+<fieldset class='control-group <%= error ? 'has-error' : ''%>'>
+  <%= f.label :status, :class => 'control-label' %>
+  <div class='controls'>
+    <%= f.text_field :status, :class => 'form-control input-xlarge input-with-feedback' %>
+    <span class='help-inline'><%= error ? f.error_message_on(:status) : "Ex: a simple text" %></span>
+  </div>
+</fieldset>
+
+
+<div class="form-actions">
+  <%= f.submit pat(:save), :class => 'btn btn-primary' %>
+  &nbsp;
+  <%= f.submit pat(:save_and_continue), :class => 'btn btn-info', :name => 'save_and_continue' %>
+  &nbsp;
+  <%= link_to pat(:cancel), url(:competitions, :index), :class => 'btn btn-default' %>
+</div>
